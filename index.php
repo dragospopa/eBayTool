@@ -3,60 +3,60 @@
 error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier debugging
 
 // API request variables
-$endpoint = 'http://svcs.ebay.com/services/search/FindingService/v1';  // URL to call
+$endpoint = 'https://api.ebay.com/buy/feed/v1_beta/item_group';  // URL to call
 $version = '1.0.0';  // API version supported by your application
 $appid = 'DragosPo-Test-PRD-fa6d8bb94-d0289368';  // Replace with your own AppID
-$globalid = 'EBAY-US';  // Global ID of the eBay site you want to search (e.g., EBAY-DE)
+$globalid = 'EBAY-GB';  // Global ID of the eBay site you want to search (e.g., EBAY-DE)
 $query = 'iphone X';  // You may want to supply your own query
 $safequery = urlencode($query);  // Make the query URL-friendly
 $i = '0';  // Initialize the item filter index to 0
 
 // Create a PHP array of the item filters you want to use in your request
-$filterarray =
-  array(
-    array(
-    'name' => 'MaxPrice',
-    'value' => '1000',
-    'paramName' => 'Currency',
-    'paramValue' => 'GBP'),
-    array(
-    'name' => 'FreeShippingOnly',
-    'value' => 'true',
-    'paramName' => '',
-    'paramValue' => ''),
-    array(
-    'name' => 'ListingType',
-    'value' => array('AuctionWithBIN','FixedPrice','StoreInventory'),
-    'paramName' => '',
-    'paramValue' => ''),
-  );
+// $filterarray =
+//   array(
+//     array(
+//     'name' => 'MaxPrice',
+//     'value' => '1000',
+//     'paramName' => 'Currency',
+//     'paramValue' => 'GBP'),
+//     array(
+//     'name' => 'FreeShippingOnly',
+//     'value' => 'true',
+//     'paramName' => '',
+//     'paramValue' => ''),
+//     array(
+//     'name' => 'ListingType',
+//     'value' => array('AuctionWithBIN','FixedPrice','StoreInventory'),
+//     'paramName' => '',
+//     'paramValue' => ''),
+//   );
 
 // Generates an indexed URL snippet from the array of item filters
-function buildURLArray ($filterarray) {
-  global $urlfilter;
-  global $i;
-  // Iterate through each filter in the array
-  foreach($filterarray as $itemfilter) {
-    // Iterate through each key in the filter
-    foreach ($itemfilter as $key =>$value) {
-      if(is_array($value)) {
-        foreach($value as $j => $content) { // Index the key for each value
-          $urlfilter .= "&itemFilter($i).$key($j)=$content";
-        }
-      }
-      else {
-        if($value != "") {
-          $urlfilter .= "&itemFilter($i).$key=$value";
-        }
-      }
-    }
-    $i++;
-  }
-  return "$urlfilter";
-} // End of buildURLArray function
+// function buildURLArray ($filterarray) {
+//   global $urlfilter;
+//   global $i;
+//   // Iterate through each filter in the array
+//   foreach($filterarray as $itemfilter) {
+//     // Iterate through each key in the filter
+//     foreach ($itemfilter as $key =>$value) {
+//       if(is_array($value)) {
+//         foreach($value as $j => $content) { // Index the key for each value
+//           $urlfilter .= "&itemFilter($i).$key($j)=$content";
+//         }
+//       }
+//       else {
+//         if($value != "") {
+//           $urlfilter .= "&itemFilter($i).$key=$value";
+//         }
+//       }
+//     }
+//     $i++;
+//   }
+//   return "$urlfilter";
+// } // End of buildURLArray function
 
 // Build the indexed item filter URL snippet
-buildURLArray($filterarray);
+// buildURLArray($filterarray);
 
 // Construct the findItemsByKeywords HTTP GET call 
 $apicall = "$endpoint?";
@@ -68,6 +68,10 @@ $apicall .= "&keywords=$safequery";
 $apicall .= "&paginationInput.entriesPerPage=100";
 $apicall .= "$urlfilter";
 
+$apicall = "$endpoint?";
+$apicall .= "feed_scope=$feed_scope";
+$apicall .= "&category_id=$category_id";
+$apicall .= "&date=$date";
 // Load the call and capture the document returned by eBay API
 $resp = simplexml_load_file($apicall);
 
