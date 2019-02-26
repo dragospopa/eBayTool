@@ -20,7 +20,7 @@ echo "<br>";
 
 
 // //The url you wish to send the POST request to
-$url = "https://api.ebay.com/identity/v1/oauth2/token";
+$url = "https://api.sandbox.ebay.com/identity/v1/oauth2/token";
 $curl = curl_init();
 
 curl_setopt_array($curl, array(
