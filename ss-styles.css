@@ -20,6 +20,11 @@ body{
 /*	Content Header Styles
 ***************************************************/
 
+.container{
+	margin: 0 auto;
+	width: 900px;
+}
+
 div.schemaTitle,
 span.title,
 span.version{
@@ -278,7 +283,7 @@ span.tablenote{
 
 table {
 	border-color: 					#e0e0e0 #838383 #838383 #e0e0e0;
-	border:	 						none;
+	border: 1px;
 	margin:		 					0 0 5px 0;
 	width:							100%;
 }
