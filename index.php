@@ -3,15 +3,15 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier debugging
 
 // sandbox
-// $clientID = "DanielSa-Example-SBX-4a6d0a603-2941e542";
-// $clientSecret = "SBX-a6d0a603000a-4767-4066-9526-d574";
-// $ruName = "Daniel_Savu-DanielSa-Exampl-gpsjh";
-// $authCode = "v^1.1#i^1#f^0#r^0#p^3#I^3#t^H4sIAAAAAAAAAOVYW2wUVRju9gKpWOUWRKi6D
+$clientID = "DanielSa-Example-SBX-4a6d0a603-2941e542";
+$clientSecret = "SBX-a6d0a603000a-4767-4066-9526-d574";
+$ruName = "Daniel_Savu-DanielSa-Exampl-gpsjh";
+$authCode = "v^1.1#i^1#f^0#r^0#p^3#I^3#t^H4sIAAAAAAAAAOVYW2wUVRju9gKpWOUWRKi6D
 
 // production
-$clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
-$clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
-$ruName = "Daniel_Savu-DanielSa-Exampl-lwxtsaiw";
+// $clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
+// $clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
+// $ruName = "Daniel_Savu-DanielSa-Exampl-lwxtsaiw";
 
 
 echo "the received code is:\n";
