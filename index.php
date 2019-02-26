@@ -6,7 +6,6 @@ error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier 
 $clientID = "DanielSa-Example-SBX-4a6d0a603-2941e542";
 $clientSecret = "SBX-a6d0a603000a-4767-4066-9526-d574";
 $ruName = "Daniel_Savu-DanielSa-Exampl-gpsjh";
-$authCode = "v^1.1#i^1#f^0#r^0#p^3#I^3#t^H4sIAAAAAAAAAOVYW2wUVRju9gKpWOUWRKi6D
 
 // production
 // $clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
