@@ -1,112 +1,77 @@
+<?php
+$conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_databosses", "ebayer");
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+ini_set('display_errors', 1);
+error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier debugging
+// sandbox
+// $clientID = "DanielSa-Example-SBX-4a6d0a603-2941e542";
+// $clientSecret = "SBX-a6d0a603000a-4767-4066-9526-d574";
+// $ruName = "Daniel_Savu-DanielSa-Exampl-gpsjh";
+// production
+$clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
+$clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
+$ruName = "Daniel_Savu-DanielSa-Exampl-lwxtsaiw";
+echo "the received code is:\n";
+echo $_GET['code'];
+echo "<br>";
+// //The url you wish to send the POST request to
+$url = "https://api.ebay.com/identity/v1/oauth2/token";
+$curl = curl_init();
+curl_setopt_array($curl, array(
+  CURLOPT_URL => $url,
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 30,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => "POST",
+  CURLOPT_POSTFIELDS => "grant_type=authorization_code&code=" .  urlencode($_GET['code']) . "&redirect_uri=" . $ruName,
+  CURLOPT_HTTPHEADER => array(
+    "Authorization: Basic " . base64_encode($clientID.':'.$clientSecret),
+    "Content-Type: application/x-www-form-urlencoded",
+  ),
+));
+$response = curl_exec($curl);
+$err = curl_error($curl);
+curl_close($curl);
+if ($err) {
+  echo "cURL Error #:" . $err;
+} else {
+  $response = json_decode($response);
+  $sql = '';
+  $creationTime = time();
+  $mysqlCreationTime = date ("Y-m-d H:i:s", $creationTime);
+  $expirationTime = $creationTime + (3600 * 2 - 10 * 60); // give it time before the actual expiry
+  $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
+  $auth_token = $response->access_token;
+  $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\");";
+  if ($conn->query($sql) === TRUE) {
+        echo "New record created successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
+?>
+
+<!-- Build the HTML page with values from the call response -->
 <html>
 <head>
-
-<link rel="stylesheet" type="text/css" href="ss-styles.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<title>eBay Search Results for <?php echo $query; ?></title>
-<script>
-
-var input = document.getElementById("search-txt");
-
-// Execute a function when the user releases a key on the keyboard
-input.addEventListener("keyup", function(event) {
-  // Cancel the default action, if needed
-  event.preventDefault();
-  // Number 13 is the "Enter" key on the keyboard
-  if (event.keyCode === 13) {
-    // Trigger the button element with a click
-    document.getElementById("search-btn").click();
-  }
-});
-</script>
-
-<script>
-
-
-function search(){ 
-  myAjax();
-  getSearchQuery();
-}
-
-
-function getSearchQuery(){
-    var query = "eBay Search Results for "; 
-    query = query + document.getElementById("search-txt").value;
-    document.getElementById("query").innerHTML = query;
-}
-
-function myAjax() {
-      $.ajax({
-           type: "POST",
-           url: 'search.php',
-           data:{query: document.getElementById("search-txt").value, currency: document.getElementById("currency").value, freeShippingOnly: document.getElementById("freeShippingOnly").checked, maxPrice: document.getElementById("maxPrice").value, minPrice: document.getElementById("minPrice").value },
-           success:function(html) {
-             document.getElementById("search-results").innerHTML = html;
-           }
-      });
-      console.log(document.querySelector('.freeShippingOnly:checked').value);
- }
-
-</script>
+<title>eBay Search Results for ye</title>
+<style type="text/css">body { font-family: arial,sans-serif;} </style>
 </head>
-
 <body>
 
-<div class="container">
+<!-- <h1>eBay Search Results for ye</h1> -->
 
-<input name="search-txt" type="text" maxlength="512" id="search-txt"/>
-<button id="search-btn" onclick="search()">Search and add to db</button>
-/
-<label for="minPrice">Min Price</label>
-<select id="minPrice">
-  <option value="0">Any</option>
-  <option value="25">25</option>
-  <option value="100">100</option>
-  <option value="250">250</option>
-  <option value="500">500</option>
-  <option value="1000">1000</option>
-</select>
-/
-<label for="maxPrice">Max Price</label>
-<select id="maxPrice">
-  <option value="999999999">Any</option>
-  <option value="25">25</option>
-  <option value="250">250</option>
-  <option value="500">500</option>
-  <option value="1000">1000</option>
-  <option value="2500">2500</option>
-  <option value="5000">5000</option>
-</select>
-/
-<label for="currency">Currency</label>
-<select id="currency">
-  <option value="GBP">GBP</option>
-  <option value="USD">USD</option>
-  <option value="EUR">EUR</option>
-  <option value="AUD">AUD</option>
-  <option value="CAD">CAD</option>
-  <option value="CHF">CHF</option>
-  <option value="CNY">CNY</option>
-  <option value="HKD">HKD</option>
-  <option value="INR">INR</option>
-  <option value="MYR">MYR</option>
-  <option value="PHP">PHP</option>
-  <option value="PLN">PLN</option>
-  <option value="SEK">SEK</option>
-  <option value="SGD">SGD</option>
-  <option value="TWD">TWD</option>
-</select>
-/
-<label for="FreeShippingOnly">Free Shipping Only</label>
-<input type="checkbox" name="vehicle2" value="FreeShippingOnly" id="freeShippingOnly">
-/
-
-
-<h1 id="query"></h1>
-<table id="search-results">
+<table>
+<tr>
+  <td>
+  </td>
+</tr>
 </table>
-</div>
 
 </body>
 </html>

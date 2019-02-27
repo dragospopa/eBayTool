@@ -5,7 +5,12 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$clientID = "GeorgiaP-Databoss-PRD-a393cab7d-302f338e";
+$clientIDShopping = "GeorgiaP-Databoss-PRD-a393cab7d-302f338e";
+
+// production
+$clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
+$clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
+$ruName = "Daniel_Savu-DanielSa-Exampl-lwxtsaiw";
 
 $curl = curl_init();
 $endpoint = 'https://api.ebay.com/buy/browse/v1/item_summary/search?';  // URL to call
@@ -34,7 +39,7 @@ curl_setopt_array($curl, array(
   CURLOPT_RETURNTRANSFER => TRUE,
   CURLOPT_POSTFIELDS => "",
   CURLOPT_HTTPHEADER => array(
-    "Authorization: Bearer v^1.1#i^1#f^0#p^3#I^3#r^0#t^H4sIAAAAAAAAAOVYW2wUVRju9gYVCtHIJbWRZaoBMbN7ZmZ3Zndk1yxtoYu0XXYLCATLmZkz7dDZmWXObNs1SMqaNAYiVkETIomEGAL4IIgYIzFRA/WSoJEHhBceNEYwMUiCoUATPbO9sC0KtOVhE/dlM//5b993/v/kPwf0lFcs6W3ovVHpmlZ8oAf0FLtczAxQUV727KyS4qqyIpCn4DrQ81RPabbk8lIMk3pKjCOcMg2M3N1J3cBiThii0pYhmhBrWDRgEmHRlsVEpHGVyHqAmLJM25RNnXJH60KUAvmAqvhZpEicqnISkRojPlvMEMUyrMIxiPULiuLnkY+sY5xGUQPb0LDJOmCCNGBpVmhh/CIHRI73BLjgBsq9FllYMw2i4gFUOJeumLO18nK9d6oQY2TZxAkVjkaWJ5oj0br6ppal3jxf4WEeEja003jsV62pIPdaqKfRvcPgnLaYSMsywpjyhocijHUqRkaSmUT6Oap9As8jyLJBEBQQF+AfCpXLTSsJ7Xvn4Ug0hVZzqiIybM3O3I9Rwoa0Bcn28FcTcRGtczt/q9NQ11QNWSGqfllk/ZpEfZxyJ2Ixy+zUFKQ4SJkgA/wc4FmBCrchM2X5BYEdDjLkaZjicVFqTUPRHMKwu8m0lyGSMRrPC5vHC1FqNpqtiGo72eTrCaP88RucDR3awbTdbjh7ipKEBHfu8/7sj5TDnQJ4WAWhSj6GFRSek3lB5gKBfy0Ip9cnWBRhZ18isZjXyQVJMEMnodWB7JQOZUTLhN50ElmaInJ+leUCKqIVPqjSvqCq0pJf4WlGRQggJElyMPB/qQ3btjQpbaPR+hi/kAMYohw+RQ2qom12IKMlk0LUeM3ckTNcFN04RLXbdkr0eru6ujxdnMe02rwsAIz3xcZVCbkdJSE1qqvdX5nWcuUhI2KFNdEmCYSoblJ9JLjRRoXj9cvj9YmG1pbmF+qbRip3TGbh8dL/QJqQzRSKmbomZwoLImcpMWjZmQTSdSKYEkjsgCwUeE6vD0F0fGDiBKY0j1NxHtlMek1ITixH1JrL2v0gSl5MSPIM9T/x7LEQVExDz0zGeAI2mtFJWsi0MpMJOGo8ARsoy2basCcTbth0AhZqWlc1XXdOickEzDOfSJoG1DO2JuPRkFMq/EgqFU0m0zaUdBRVCqUDhhs8AECQnzK8AkO1AhEbDcboOkhYd3rdxJiOxetoyAU5GUqCQnOAVTkugKaEvbFNKzDoDM8yPgYwvI+YTQlbHeostH0NMD5WkJGPhpIP0j4FIVpSAgLNBgJIZiUOABVOCXOtrpGjovBGjQYT20iZGjQyDxcWKKcfR9qRYSVAA8gB2seSARnKLEtLqiw8KOQRQSl393B5153CO/ZCHy7K/Zis6yTIuo4Xu1zAC55masDC8pI1pSUzq7BmIw8ZRD1YazPIPdVCng6USUHNKi53baw+dqQ17wnhwCYwf/QRoaKEmZH3ogCq76yUMbPnVTJBwLICQ6Z0MiGDmjurpczc0sfji47Dj3dt93/Udebt03+jJ6ZXzgyCylEll6usqDTrKqptam38cee2g98f6u4Nzbpy9b3ORwfO/7H35Ot9A/u6z2ptc/+SLszaPv3q2cXXvxpouDh4qOnb/nepJ1XPF95Q/8GeL1e+dT6FHzs3/8JW1zvgu6rBFdMjs29/dlOsmpPcf2vauu7PDzeeWdB+rfjVwa8/SE5rHuysPlEjXDzM6RXxSqoj05R9f8nMvk8u37rWVb2gY+PNX/f0PrL45c0D2pK+PUd2rFy3Wn2tZvZWftfFyN7z3/y55+i5+Lz9cy41tvbu7uu8Hl3keuWSp1/c9ObRTdnnP/x0Z+3GfnPHjVP7Tl9Z+MOJll3bfj/z06mbx0q3nOt7Jttd9NJzMXG9X9l8ZMYvv6VuH/z50nz5jWVD2/cPSAUlo9wRAAA=",
+    "Authorization: Bearer v^1.1#i^1#r^0#p^3#f^0#I^3#t^H4sIAAAAAAAAAOVYXWwUVRTu9o80iAJiVQRZB0wQmN07P7uzO7JLtrSlG2i77BYCNQp3Zu60087OrHPvtN0HYqkJNCZCfDAxJCaNQIyoAYOVYBpEDSYoEtEQKUooPmh9gBh8gIREnNn+sK0KtOVhE/dlM+eev+8759ycGdBdXrFiV92uG3M8s4r7ukF3scfDzAYV5WUrHy4pXlhWBPIUPH3dy7pLe0qGV2OY1jNiEuGMaWDk7UrrBhZzwghlW4ZoQqxh0YBphEUii6lY/QaR9QExY5nElE2d8sarI5SKeAUAVVE4luMgwzpSY8xnkxmhlHCQYYGCBCCBUCDMOOcY2yhuYAINEqFYwIRpwNKs0MSERI4XGcYHeKGZ8m5GFtZMw1HxASqaS1fM2Vp5ud49VYgxsojjhIrGY7Wpxli8uqahabU/z1d0lIcUgcTGE5/Wmgryboa6je4eBue0xZQtywhjyh8diTDRqRgbS2Ya6eeoFhDLynyYVVQpIIdDoQdCZa1ppSG5ex6uRFNoNacqIoNoJHsvRh02pDYkk9GnBsdFvNrr/m20oa6pGrIiVE1VbOumVE2S8qYSCcvs0BSkuEiZMBtiOEFgGCqqWDBj0mFuNMaIo1GGJwVZaxqK5vKFvQ0mqUJOwmgyLWweLY5So9FoxVTiJpOnx4Jx+gLNbj1HCmiTVsMtKUo7HHhzj/cmf6wb7tT/QfUDK6iswIYEiZXZUCAg/Xs/uLM+tZ6IumWJJRJ+NxckwSydhlY7IhkdyoiWHXrtNLI0ReQCKsuFVEQrwbBK82FVpaWAEqQZFSGAkCQ5Xfo/aQ1CLE2yCRpvj8kHOXwRyqVT1KAqErMdGU3ZDKIma+YunNGe6MIRqpWQjOj3d3Z2+jo5n2m1+FkAGP+W+g0puRWlITWuq91bmdZy3SEjxwprInESiFBdTvM5wY0WKpqsqU3WpOq2NTWur2kYa9wJmUUnS/8DaUo2Myhh6pqcLSyInKUkoEWyKaTrjmBGILELsnDgubPuQnR9YMcJzGg+t+N8spn2m9C5sFzRtlzW3vtR8mOHJN/I+Dtc+SwEFdPQs9MxnoKNZnQ4I2Ra2ekEHDeegg2UZdM2yHTCjZpOwUK1dVXTdfeWmE7APPOppGlAPUs0GY+HnFHjxzKZeDptEyjpKK4UzgTkBjzEB4P8jOEVGKpqaGhIT0G6pgumMzpyZ51OJKtpgQmiQECAPO3sAZBhwjODXt+iFRhyJiiwPODZEACAmxG2atRRaGWVEeCALAs0zwuA5iWVp8OCEHQWKWfLQSpUw9zM6rlW15ybovA2jToTE6TMDJqzDRcWKHcex8YxAKUQzUIpTPOMJNMSw3PODqlK9ws5T1AKJu2W/3ij8E98m48W5X5Mj6cf9Hg+KvZ4gB88yywFz5SXbCoteWgh1gjyOXuoD2sthvOSaiFfO8pmoGYVl3teWHTkvW153w/6XgRPjH9BqChhZud9TgCL7pyUMY88PocJA5YVmBDHM0wzWHrntJSpLF2gfKtvT52vf3O4v+9r+9X4c98/dbkXzBlX8njKikp7PEU/pD/zxn+59caZg4/uHVzQs/vw/tKh7Ln4z3v1WbvYeU8vPv/Kut7fjwye+PSnI0s+uFhtXrPfPX3zwsl0Gek/s/86Wf7yj3siX32y+4J48/Vm382Bc4eW7fn8+pPL3yHoYORkjO1+H5O6xKGN605t+W6o6o/WfTg794B1tuzK3LbjC/e9lvm1vXL9n+c7v3zp2HDb1VW9j10aqFt/dXGr59Lbtw+sogMD8+YOnEpt93+xYP7io7ul2bfWtPy2mTP7L1/cfmX1irbDS1Y0r2m/zVUOn0bJ+Rt6T6xMXH9rXcWSVcd7hi7uWBaSdppD9tGqs/bpA/OSmzbuqLwRDf01uFX5Bl5rf/7DnR8f6xgcKd/fPPSP4tkRAAA=",
     "Content-Type: application/json",
     "cache-control: no-cache"
   ),
@@ -44,10 +49,12 @@ $err = curl_error($curl);
 curl_close($curl);
 echo "hi<br>";
 if ($err) {
+  print_r($err);
   echo "cURL Error #:" . $err;
 } else {
+  //print_r($resp);
   $resp = json_decode($resp);
-  print_r($resp->itemSummaries[0]);
+  //print_r($resp->itemSummaries[0]);
   foreach($resp->itemSummaries as $item) {
     $itemId = substr($item->itemId, 3, -2);
     $productName = $item->title;
@@ -58,8 +65,7 @@ if ($err) {
     $sellerFeedbackPercentage = $item->seller->feedbackScore;
     $itemCondition = $item->condition;
     $bidCount = $item->bidCount;
-    //$auctionStartTime = '2000-01-01 00:00:00';
-    //$auctionEndTime   = '2020-01-01 00:00:00';
+    
     if (count($item->buyingOptions)>1) {
       $buyingOptions = 3;
     } else if ($item->buyingOptions[0] == "AUCTION"){
@@ -70,28 +76,50 @@ if ($err) {
     //print_r($item->currentBidPrice->value);
     //print_r($thumbnailPhotoURL);
 
-    //Shopping api
-
-    $apicall  = "$endpoint?";
+    //Shopping API
+    print_r("<br><br>");
+    $apicall  = "$endpointShopping?";
     $apicall .= "callname=GetItemStatus&";
-    $apicall .= "responseencoding=XML&";
-    $apicall .= "appid=$clientID&";
+    $apicall .= "responseencoding=JSON&";
+    $apicall .= "appid=$clientIDShopping&";
     $apicall .= "siteid=0&";
     $apicall .= "version=967&";
-    $apicall .= "ItemID=$itemID";
+    $apicall .= "ItemID=$itemId";
+    //print_r($apicall);
+    //$resp_shop = simplexml_load_file($apicall);
 
-    $resp_shop = simplexml_load_file($apicall);
+   $ch = curl_init();
+   curl_setopt_array($ch, array(
+     CURLOPT_URL => $apicall,
+     CURLOPT_ENCODING => "",
+     CURLOPT_TIMEOUT => 30,
+     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+     CURLOPT_CUSTOMREQUEST => "GET",
+     CURLOPT_RETURNTRANSFER => TRUE,
+     CURLOPT_POSTFIELDS => "",
+     CURLOPT_HTTPHEADER => array(
+    "Authorization: Bearer v^1.1#i^1#r^0#p^3#f^0#I^3#t^H4sIAAAAAAAAAOVYXWwUVRTu9o80iAJiVQRZB0wQmN07P7uzO7JLtrSlG2i77BYCNQp3Zu60087OrHPvtN0HYqkJNCZCfDAxJCaNQIyoAYOVYBpEDSYoEtEQKUooPmh9gBh8gIREnNn+sK0KtOVhE/dlM+eev+8759ycGdBdXrFiV92uG3M8s4r7ukF3scfDzAYV5WUrHy4pXlhWBPIUPH3dy7pLe0qGV2OY1jNiEuGMaWDk7UrrBhZzwghlW4ZoQqxh0YBphEUii6lY/QaR9QExY5nElE2d8sarI5SKeAUAVVE4luMgwzpSY8xnkxmhlHCQYYGCBCCBUCDMOOcY2yhuYAINEqFYwIRpwNKs0MSERI4XGcYHeKGZ8m5GFtZMw1HxASqaS1fM2Vp5ud49VYgxsojjhIrGY7Wpxli8uqahabU/z1d0lIcUgcTGE5/Wmgryboa6je4eBue0xZQtywhjyh8diTDRqRgbS2Ya6eeoFhDLynyYVVQpIIdDoQdCZa1ppSG5ex6uRFNoNacqIoNoJHsvRh02pDYkk9GnBsdFvNrr/m20oa6pGrIiVE1VbOumVE2S8qYSCcvs0BSkuEiZMBtiOEFgGCqqWDBj0mFuNMaIo1GGJwVZaxqK5vKFvQ0mqUJOwmgyLWweLY5So9FoxVTiJpOnx4Jx+gLNbj1HCmiTVsMtKUo7HHhzj/cmf6wb7tT/QfUDK6iswIYEiZXZUCAg/Xs/uLM+tZ6IumWJJRJ+NxckwSydhlY7IhkdyoiWHXrtNLI0ReQCKsuFVEQrwbBK82FVpaWAEqQZFSGAkCQ5Xfo/aQ1CLE2yCRpvj8kHOXwRyqVT1KAqErMdGU3ZDKIma+YunNGe6MIRqpWQjOj3d3Z2+jo5n2m1+FkAGP+W+g0puRWlITWuq91bmdZy3SEjxwprInESiFBdTvM5wY0WKpqsqU3WpOq2NTWur2kYa9wJmUUnS/8DaUo2Myhh6pqcLSyInKUkoEWyKaTrjmBGILELsnDgubPuQnR9YMcJzGg+t+N8spn2m9C5sFzRtlzW3vtR8mOHJN/I+Dtc+SwEFdPQs9MxnoKNZnQ4I2Ra2ekEHDeegg2UZdM2yHTCjZpOwUK1dVXTdfeWmE7APPOppGlAPUs0GY+HnFHjxzKZeDptEyjpKK4UzgTkBjzEB4P8jOEVGKpqaGhIT0G6pgumMzpyZ51OJKtpgQmiQECAPO3sAZBhwjODXt+iFRhyJiiwPODZEACAmxG2atRRaGWVEeCALAs0zwuA5iWVp8OCEHQWKWfLQSpUw9zM6rlW15ybovA2jToTE6TMDJqzDRcWKHcex8YxAKUQzUIpTPOMJNMSw3PODqlK9ws5T1AKJu2W/3ij8E98m48W5X5Mj6cf9Hg+KvZ4gB88yywFz5SXbCoteWgh1gjyOXuoD2sthvOSaiFfO8pmoGYVl3teWHTkvW153w/6XgRPjH9BqChhZud9TgCL7pyUMY88PocJA5YVmBDHM0wzWHrntJSpLF2gfKtvT52vf3O4v+9r+9X4c98/dbkXzBlX8njKikp7PEU/pD/zxn+59caZg4/uHVzQs/vw/tKh7Ln4z3v1WbvYeU8vPv/Kut7fjwye+PSnI0s+uFhtXrPfPX3zwsl0Gek/s/86Wf7yj3siX32y+4J48/Vm382Bc4eW7fn8+pPL3yHoYORkjO1+H5O6xKGN605t+W6o6o/WfTg794B1tuzK3LbjC/e9lvm1vXL9n+c7v3zp2HDb1VW9j10aqFt/dXGr59Lbtw+sogMD8+YOnEpt93+xYP7io7ul2bfWtPy2mTP7L1/cfmX1irbDS1Y0r2m/zVUOn0bJ+Rt6T6xMXH9rXcWSVcd7hi7uWBaSdppD9tGqs/bpA/OSmzbuqLwRDf01uFX5Bl5rf/7DnR8f6xgcKd/fPPSP4tkRAAA=",
+    "Content-Type: application/json",
+    "cache-control: no-cache"
+    ),
+  ));
 
+   $response = curl_exec($ch);
+   curl_close($ch);
 
-    foreach($resp_shop->Item as $item) {
-      $auctionEndTime  = $item->EndTime;
-      $listingStatus = $item->ListingStatus;
-    }
+   $response = json_decode($response);
 
+    //print_r($response);
+    $auctionEndTime  = $response->Item[0]->EndTime;
+    $listingStatus = date("Y-m-d H:i:s", $response->Item[0]->ListingStatus);
+    //print_r($auctionEndTime);
+    //print_r($listingStatus);
     $sql = '';
-    $sql .=  "INSERT INTO auctions (itemID, productName, highestBid, currency, thumbnailPhotoURL, sellerUsername, sellerFeedbackPercentage, itemCondition, bidCount,  auctionEndTime, buyingOptions, listingStatus,) values
+    $sql .=  "INSERT INTO auctions (itemID, productName, highestBid, currency, thumbnailPhotoURL, sellerUsername, sellerFeedbackPercentage, itemCondition, bidCount,  auctionEndTime, buyingOptions, listingStatus) values
                                   (\"$itemId\", \"$productName\", $highestBid, \"$currency\",\"$thumbnailPhotoURL\", \"$sellerUsername\", $sellerFeedbackPercentage, \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$buyingOptions\", \"$listingStatus\"); ";
     print_r($sql);
+   
+
     if ($conn->query($sql) === TRUE) {
         echo "New record created successfully";
     } else {
