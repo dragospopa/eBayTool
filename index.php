@@ -1,4 +1,13 @@
 <?php
+
+
+$conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_databosses", "ebayer");
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier debugging
 
@@ -45,9 +54,22 @@ curl_close($curl);
 if ($err) {
   echo "cURL Error #:" . $err;
 } else {
-  echo $response;
-}
+  $response = json_decode($response);
 
+  $sql = '';
+  $creationTime = time();
+  $mysqlCreationTime = date ("Y-m-d H:i:s", $creationTime);
+  $expirationTime = $creationTime + (3600 * 2 - 10 * 60); // give it time before the actual expiry
+  $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
+  $auth_token = $response->access_token;
+
+  $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\");";
+  if ($conn->query($sql) === TRUE) {
+        echo "New record created successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
 
 ?>
 
