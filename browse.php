@@ -31,11 +31,22 @@ echo $endpoint;
 echo "<br><br><br>";
 echo "im done here<br><br>";
 
-$token_sql = "select auth_token from tokens limit = 1";
+$token_sql = "select auth_token from tokens limit 1;";
 $tokens_result = $conn->query($token_sql);
+
+    if ($conn->query($token_sql) === TRUE) {
+        echo "New record created successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+print_r($tokens_result);
 if ($tokens_result->num_rows==0){
-  // cheama token.php si populeaza $auth_token
+   $execute = 'token.php';
+   echo $execute;
+   // cheama token.php si populeaza $auth_token
 } else {
+   print_r("good branch of if-statement");
    $token_row = $tokens_result->fetch_assoc();
    $auth_token = $token_row['auth_token'];
 }
