@@ -1,4 +1,9 @@
 <?php
+$conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_databosses", "ebayer");
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 ini_set('display_errors', 1);
 error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier debugging
 // sandbox
@@ -9,11 +14,9 @@ error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier 
 $clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
 $clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
 $ruName = "Daniel_Savu-DanielSa-Exampl-lwxtsaiw";
-
 echo "the received code is:\n";
 echo $_GET['code'];
 echo "<br>";
-
 // //The url you wish to send the POST request to
 $url = "https://api.ebay.com/identity/v1/oauth2/token";
 $curl = curl_init();
@@ -37,9 +40,18 @@ curl_close($curl);
 if ($err) {
   echo "cURL Error #:" . $err;
 } else {
-  echo $response;
-  $access_token = $response['access_token'];
-  $expires = $response['expires_in'];
-  // TODO: push to db?
+  $response = json_decode($response);
+  $sql = '';
+  $creationTime = time();
+  $mysqlCreationTime = date ("Y-m-d H:i:s", $creationTime);
+  $expirationTime = $creationTime + (3600 * 2 - 10 * 60); // give it time before the actual expiry
+  $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
+  $auth_token = $response->access_token;
+  $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\");";
+  if ($conn->query($sql) === TRUE) {
+        echo "New record created successfully";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
 }
 ?>
