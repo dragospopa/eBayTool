@@ -1,4 +1,6 @@
 <?php
+
+
 $conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_databosses", "ebayer");
 // Check connection
 if ($conn->connect_error) {
@@ -31,23 +33,28 @@ echo $endpoint;
 echo "<br><br><br>";
 echo "im done here<br><br>";
 
-$token_sql = "select auth_token from tokens limit 1;";
+$token_sql = "select * from tokens limit 1;";
 $tokens_result = $conn->query($token_sql);
 
 if ($conn->query($token_sql) === FALSE) {
   echo "Error: " . $sql . "<br>" . $conn->error;
 }
 
+$get_token_url = 'https://auth.ebay.com/oauth2/authorize?client_id=DanielSa-Example-PRD-716e557a4-2c2a1194&response_type=code&redirect_uri=Daniel_Savu-DanielSa-Exampl-lwxtsaiw&scope=https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly';
+$authenticate_message = '<p>Please visit <a href="'.$get_token_url.'">this link</a> in order to authenticate with eBay.</p>'; 
+
 if ($tokens_result->num_rows==0){
-  $execute = 'token.php';
-  echo $execute;
-  $get_token_url = 'https://auth.ebay.com/oauth2/authorize?client_id=DanielSa-Example-PRD-716e557a4-2c2a1194&response_type=code&redirect_uri=Daniel_Savu-DanielSa-Exampl-lwxtsaiw&scope=https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly'
-  echo '<p>Please visit <a href="$get_token_url">this link</a> in order to authenticate with eBay.</p>'; 
+    echo $authenticate_message;
 } else {
-   print_r("good branch of if-statement");
    $token_row = $tokens_result->fetch_assoc();
-   $auth_token = $token_row['auth_token'];
+   if ( time() > strtotime($token_row['expirationTime']) ){
+     echo $authenticate_message;
+     $delete_sql = "DELETE from tokens;";
+     if ($conn->query($delete_sql) === FALSE) {exit();}
+   } else { $auth_token = $token_row['auth_token']; }
 }
+
+print_r("hi<br>");
 
 
 curl_setopt_array($curl, array(
@@ -148,4 +155,5 @@ if ($err) {
     echo "<br><br><br><br><br>";
   }
 }
+
 ?>
