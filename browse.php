@@ -41,7 +41,7 @@ if ($conn->query($token_sql) === FALSE) {
 }
 
 $get_token_url = 'https://auth.ebay.com/oauth2/authorize?client_id=DanielSa-Example-PRD-716e557a4-2c2a1194&response_type=code&redirect_uri=Daniel_Savu-DanielSa-Exampl-lwxtsaiw&scope=https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly';
-$authenticate_message = '<p>Please visit <a href="'.$get_token_url.'">this link</a> in order to authenticate with eBay.</p>'; 
+$authenticate_message = '<p>Please visit <a href="'.$get_token_url.'">this link</a> in order to authenticate with eBay.</p>';
 
 if ($tokens_result->num_rows==0){
     echo $authenticate_message;
@@ -84,10 +84,27 @@ if ($err) {
   //print_r($resp->itemSummaries[0]);
   foreach($resp->itemSummaries as $item) {
     $itemId = substr($item->itemId, 3, -2);
+
+
+    $query_sql = "SELECT * from auctions WHERE itemID = $itemId;";
+    $query_resp = $conn->query($query_sql);
+    if($query_resp->num_rows != 0) { continue; }
+
+    print_r($itemId);
+
     $productName = $item->title;
     $highestBid = $item->currentBidPrice->value;
     $currency = $item->currentBidPrice->currency;
-    $thumbnailPhotoURL = $item->thumbnailImages[0]->imageUrl;
+
+    if(isset($item->thumbnailImages[0]->imageUrl))
+        $thumbnailPhotoURL = $item->thumbnailImages[0]->imageUrl;
+      else {
+          $thumbnailPhotoURL="";
+      }
+
+    if(!isset($item->seller->username))
+            continue;
+
     $sellerUsername = $item->seller->username;
     $sellerFeedbackPercentage = $item->seller->feedbackScore;
     $itemCondition = $item->condition;
@@ -136,15 +153,54 @@ if ($err) {
 
    $response = json_decode($response);
 
+  // print_r ($response->Item[0]->EndTime);
+
     //print_r($response);
-    $auctionEndTime  = $response->Item[0]->EndTime;
-    $listingStatus = date("Y-m-d H:i:s", $response->Item[0]->ListingStatus);
+
+    $auctionEndTime  =  $response->Item[0]->EndTime;
+    $listingStatus = $response->Item[0]->ListingStatus;
+
+    //print_r ($response);
     //print_r($auctionEndTime);
     //print_r($listingStatus);
+
+
     $sql = '';
+
     $sql .=  "INSERT INTO auctions (itemID, productName, highestBid, currency, thumbnailPhotoURL, sellerUsername, sellerFeedbackPercentage, itemCondition, bidCount,  auctionEndTime, buyingOptions, listingStatus) values
                                   (\"$itemId\", \"$productName\", $highestBid, \"$currency\",\"$thumbnailPhotoURL\", \"$sellerUsername\", $sellerFeedbackPercentage, \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$buyingOptions\", \"$listingStatus\"); ";
-    print_r($sql);
+
+    // else {
+    //   $sql .=  "INSERT INTO auctions (itemID, productName, highestBid, currency, thumbnailPhotoURL, sellerUsername, sellerFeedbackPercentage, itemCondition, bidCount,  auctionEndTime, buyingOptions, listingStatus) values
+    //                                 (\"$itemId\", \"$productName\", $highestBid, \"$currency\", , \"$sellerUsername\", $sellerFeedbackPercentage, \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$buyingOptions\", \"$listingStatus\"); ";
+    // }
+    $query_r = $conn->query($sql);
+    // urmeaza chestia complicata
+
+    foreach($item->categories as $category)
+    {
+      print_r ($category);
+      print_r ("<br>");
+      $categoryId = $category->categoryId;
+      $query_sql = "SELECT * from categories WHERE id = $categoryId;";
+      $query_resp = $conn->query($query_sql);
+
+      if($query_resp->num_rows == 0) {
+        $sql = '';
+        $sql .= "INSERT INTO categories (id) values ('$categoryId');";
+        if ($conn->query($sql) === FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; }
+
+      }
+
+      $sql = "SELECT id from categories WHERE id = $categoryId;";
+      $category_resp =  $conn->query($sql);
+
+      $category_row = $category_resp->fetch_assoc();
+      $category_id = $category_row['id'];
+
+      $sql = "INSERT INTO product_category_junction (itemID, categoryID) values ('$itemId','$category_id');";
+      if ($conn->query($sql) === FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; }
+    }
 
 
     if ($conn->query($sql) === TRUE) {
