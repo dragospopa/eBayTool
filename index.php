@@ -14,9 +14,11 @@ error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier 
 $clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
 $clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
 $ruName = "Daniel_Savu-DanielSa-Exampl-lwxtsaiw";
+
 echo "the received code is:\n";
 echo $_GET['code'];
 echo "<br>";
+
 // //The url you wish to send the POST request to
 $url = "https://api.ebay.com/identity/v1/oauth2/token";
 $curl = curl_init();
@@ -34,27 +36,37 @@ curl_setopt_array($curl, array(
     "Content-Type: application/x-www-form-urlencoded",
   ),
 ));
+
 $response = curl_exec($curl);
 $err = curl_error($curl);
 curl_close($curl);
+
 if ($err) {
   echo "cURL Error #:" . $err;
 } else {
   $response = json_decode($response);
   $sql = '';
+  
   $creationTime = time();
   $mysqlCreationTime = date ("Y-m-d H:i:s", $creationTime);
   $expirationTime = $creationTime + (3600 * 2 - 10 * 60); // give it time before the actual expiry
   $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
+  
   $auth_token = $response->access_token;
+  
+  if (empty($auth_token)){ exit(); }
+  else {
   $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\");";
   if ($conn->query($sql) === TRUE) {
         echo "New record created successfully";
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
+  }
 }
 ?>
+
+
 
 <!-- Build the HTML page with values from the call response -->
 <html>
@@ -69,6 +81,7 @@ if ($err) {
 <table>
 <tr>
   <td>
+  Insert!
   </td>
 </tr>
 </table>
