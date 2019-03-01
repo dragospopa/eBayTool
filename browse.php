@@ -1,11 +1,17 @@
 <?php
+
 $conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_databosses", "ebayer");
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$clientID = "GeorgiaP-Databoss-PRD-a393cab7d-302f338e";
+$clientIDShopping = "GeorgiaP-Databoss-PRD-a393cab7d-302f338e";
+
+// production
+$clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
+$clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
+$ruName = "Daniel_Savu-DanielSa-Exampl-lwxtsaiw";
 
 $curl = curl_init();
 $endpoint = 'https://api.ebay.com/buy/browse/v1/item_summary/search?';  // URL to call
@@ -22,9 +28,28 @@ $endpoint .= "limit".urlencode($filters['limit']);
 foreach($filters['filter'] as $filter) {
   $endpoint .= "&filter=".urlencode($filter);
 }
-echo $endpoint;
-echo "<br><br><br>";
-echo "im done here<br><br>";
+
+$token_sql = "select * from tokens limit 1;";
+$tokens_result = $conn->query($token_sql);
+
+if ($conn->query($token_sql) === FALSE) {
+  echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+$get_token_url = 'https://auth.ebay.com/oauth2/authorize?client_id=DanielSa-Example-PRD-716e557a4-2c2a1194&response_type=code&redirect_uri=Daniel_Savu-DanielSa-Exampl-lwxtsaiw&scope=https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly';
+$authenticate_message = '<p>Please visit <a href="'.$get_token_url.'">this link</a> in order to authenticate with eBay.</p>';
+
+if ($tokens_result->num_rows==0){
+    echo $authenticate_message;
+} else {
+   $token_row = $tokens_result->fetch_assoc();
+   if ( time() > strtotime($token_row['expirationTime']) ){
+     echo $authenticate_message;
+     $delete_sql = "DELETE from tokens;";
+     if ($conn->query($delete_sql) === FALSE) {exit();}
+   } else { $auth_token = $token_row['auth_token']; }
+}
+
 curl_setopt_array($curl, array(
   CURLOPT_URL => $endpoint,
   CURLOPT_ENCODING => "",
@@ -34,7 +59,7 @@ curl_setopt_array($curl, array(
   CURLOPT_RETURNTRANSFER => TRUE,
   CURLOPT_POSTFIELDS => "",
   CURLOPT_HTTPHEADER => array(
-    "Authorization: Bearer v^1.1#i^1#f^0#p^3#I^3#r^0#t^H4sIAAAAAAAAAOVYW2wUVRju9gYVCtHIJbWRZaoBMbN7ZmZ3Zndk1yxtoYu0XXYLCATLmZkz7dDZmWXObNs1SMqaNAYiVkETIomEGAL4IIgYIzFRA/WSoJEHhBceNEYwMUiCoUATPbO9sC0KtOVhE/dlM//5b993/v/kPwf0lFcs6W3ovVHpmlZ8oAf0FLtczAxQUV727KyS4qqyIpCn4DrQ81RPabbk8lIMk3pKjCOcMg2M3N1J3cBiThii0pYhmhBrWDRgEmHRlsVEpHGVyHqAmLJM25RNnXJH60KUAvmAqvhZpEicqnISkRojPlvMEMUyrMIxiPULiuLnkY+sY5xGUQPb0LDJOmCCNGBpVmhh/CIHRI73BLjgBsq9FllYMw2i4gFUOJeumLO18nK9d6oQY2TZxAkVjkaWJ5oj0br6ppal3jxf4WEeEja003jsV62pIPdaqKfRvcPgnLaYSMsywpjyhocijHUqRkaSmUT6Oap9As8jyLJBEBQQF+AfCpXLTSsJ7Xvn4Ug0hVZzqiIybM3O3I9Rwoa0Bcn28FcTcRGtczt/q9NQ11QNWSGqfllk/ZpEfZxyJ2Ixy+zUFKQ4SJkgA/wc4FmBCrchM2X5BYEdDjLkaZjicVFqTUPRHMKwu8m0lyGSMRrPC5vHC1FqNpqtiGo72eTrCaP88RucDR3awbTdbjh7ipKEBHfu8/7sj5TDnQJ4WAWhSj6GFRSek3lB5gKBfy0Ip9cnWBRhZ18isZjXyQVJMEMnodWB7JQOZUTLhN50ElmaInJ+leUCKqIVPqjSvqCq0pJf4WlGRQggJElyMPB/qQ3btjQpbaPR+hi/kAMYohw+RQ2qom12IKMlk0LUeM3ckTNcFN04RLXbdkr0eru6ujxdnMe02rwsAIz3xcZVCbkdJSE1qqvdX5nWcuUhI2KFNdEmCYSoblJ9JLjRRoXj9cvj9YmG1pbmF+qbRip3TGbh8dL/QJqQzRSKmbomZwoLImcpMWjZmQTSdSKYEkjsgCwUeE6vD0F0fGDiBKY0j1NxHtlMek1ITixH1JrL2v0gSl5MSPIM9T/x7LEQVExDz0zGeAI2mtFJWsi0MpMJOGo8ARsoy2basCcTbth0AhZqWlc1XXdOickEzDOfSJoG1DO2JuPRkFMq/EgqFU0m0zaUdBRVCqUDhhs8AECQnzK8AkO1AhEbDcboOkhYd3rdxJiOxetoyAU5GUqCQnOAVTkugKaEvbFNKzDoDM8yPgYwvI+YTQlbHeostH0NMD5WkJGPhpIP0j4FIVpSAgLNBgJIZiUOABVOCXOtrpGjovBGjQYT20iZGjQyDxcWKKcfR9qRYSVAA8gB2seSARnKLEtLqiw8KOQRQSl393B5153CO/ZCHy7K/Zis6yTIuo4Xu1zAC55masDC8pI1pSUzq7BmIw8ZRD1YazPIPdVCng6USUHNKi53baw+dqQ17wnhwCYwf/QRoaKEmZH3ogCq76yUMbPnVTJBwLICQ6Z0MiGDmjurpczc0sfji47Dj3dt93/Udebt03+jJ6ZXzgyCylEll6usqDTrKqptam38cee2g98f6u4Nzbpy9b3ORwfO/7H35Ot9A/u6z2ptc/+SLszaPv3q2cXXvxpouDh4qOnb/nepJ1XPF95Q/8GeL1e+dT6FHzs3/8JW1zvgu6rBFdMjs29/dlOsmpPcf2vauu7PDzeeWdB+rfjVwa8/SE5rHuysPlEjXDzM6RXxSqoj05R9f8nMvk8u37rWVb2gY+PNX/f0PrL45c0D2pK+PUd2rFy3Wn2tZvZWftfFyN7z3/y55+i5+Lz9cy41tvbu7uu8Hl3keuWSp1/c9ObRTdnnP/x0Z+3GfnPHjVP7Tl9Z+MOJll3bfj/z06mbx0q3nOt7Jttd9NJzMXG9X9l8ZMYvv6VuH/z50nz5jWVD2/cPSAUlo9wRAAA=",
+    "Authorization: Bearer $auth_token",
     "Content-Type: application/json",
     "cache-control: no-cache"
   ),
@@ -42,24 +67,42 @@ curl_setopt_array($curl, array(
 $resp = curl_exec($curl);
 $err = curl_error($curl);
 curl_close($curl);
-echo "hi<br>";
+
 if ($err) {
+  print_r($err);
   echo "cURL Error #:" . $err;
 } else {
+
   $resp = json_decode($resp);
-  print_r($resp->itemSummaries[0]);
+
   foreach($resp->itemSummaries as $item) {
     $itemId = substr($item->itemId, 3, -2);
-    $productName = $item->title;
     $highestBid = $item->currentBidPrice->value;
+    $bidCount = $item->bidCount;
+
+    $query_sql = "SELECT * from items WHERE itemID = $itemId;";
+    $query_resp = $conn->query($query_sql);
+    
+    if($query_resp->num_rows != 0) { 
+      $row = $query_resp->fetch_assoc();
+      
+      if (($row['highestBid'] != $highestBid) || ($row['bidCount'] != $bidCount)){
+        $sql = 'UPDATE items set highestBid = $highestBid, bidCount = $bidCount, where itemID = $itemId;';
+        if ($conn->query($sql) == TRUE){}
+      }
+    }
+
+    $productName = $item->title;
     $currency = $item->currentBidPrice->currency;
+
+    if(!isset($item->thumbnailImages[0]->imageUrl)) continue;
+    if(!isset($item->seller->username)) continue;
+
     $thumbnailPhotoURL = $item->thumbnailImages[0]->imageUrl;
     $sellerUsername = $item->seller->username;
     $sellerFeedbackPercentage = $item->seller->feedbackScore;
     $itemCondition = $item->condition;
-    $bidCount = $item->bidCount;
-    //$auctionStartTime = '2000-01-01 00:00:00';
-    //$auctionEndTime   = '2020-01-01 00:00:00';
+
     if (count($item->buyingOptions)>1) {
       $buyingOptions = 3;
     } else if ($item->buyingOptions[0] == "AUCTION"){
@@ -67,37 +110,93 @@ if ($err) {
     } else {
       $buyingOptions = 2;
     }
-    //print_r($item->currentBidPrice->value);
-    //print_r($thumbnailPhotoURL);
-
-    //Shopping api
-
-    $apicall  = "$endpoint?";
+    //Shopping API
+    $apicall  = "$endpointShopping?";
     $apicall .= "callname=GetItemStatus&";
-    $apicall .= "responseencoding=XML&";
-    $apicall .= "appid=$clientID&";
+    $apicall .= "responseencoding=JSON&";
+    $apicall .= "appid=$clientIDShopping&";
     $apicall .= "siteid=0&";
     $apicall .= "version=967&";
-    $apicall .= "ItemID=$itemID";
+    $apicall .= "ItemID=$itemId";
 
-    $resp_shop = simplexml_load_file($apicall);
+   $ch = curl_init();
+   curl_setopt_array($ch, array(
+     CURLOPT_URL => $apicall,
+     CURLOPT_ENCODING => "",
+     CURLOPT_TIMEOUT => 30,
+     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+     CURLOPT_CUSTOMREQUEST => "GET",
+     CURLOPT_RETURNTRANSFER => TRUE,
+     CURLOPT_POSTFIELDS => "",
+     CURLOPT_HTTPHEADER => array(
+    "Authorization: Bearer $auth_token",
+    "Content-Type: application/json",
+    "cache-control: no-cache"
+    ),
+  ));
+
+   $response = curl_exec($ch);
+   curl_close($ch);
+
+   $response = json_decode($response);
+
+    $auctionEndTime  =  $response->Item[0]->EndTime;
+    $listingStatus = $response->Item[0]->ListingStatus;
+
+    $auction_sql = "INSERT INTO items (itemID, itemName, highestBid, currency, thumbnailPhotoURL, sellerUsername, itemCondition, bidCount,  auctionEndTime, listingStatus) values
+                                  (\"$itemId\", \"$productName\", $highestBid, \"$currency\",\"$thumbnailPhotoURL\", \"$sellerUsername\", \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$listingStatus\"); ";
+    $query_r = $conn->query($auction_sql);
+
+    $seller_sql = "INSERT INTO sellers (username, feedbackPercentage) values (\"$sellerUsername\", $sellerFeedbackPercentage);";
+    $query_r = $conn->query($seller_sql);
 
 
-    foreach($resp_shop->Item as $item) {
-      $auctionEndTime  = $item->EndTime;
-      $listingStatus = $item->ListingStatus;
+    // Populate the buyingOptions Table - Many to Many relation
+    foreach($item->buyingOptions as $buyingOption) {
+      $query_sql = "SELECT * from buyingOptions where buyingOption = \"$buyingOption\"";
+      $query_resp = $conn->query($query_sql);
+
+      if($query_resp->num_rows == 0){
+        $sql = "INSERT INTO buyingOptions (buyingOption) values ('$buyingOption');";
+        if ($conn->query($sql) === FALSE) { }
+      }
+
+      $sql = "SELECT id from buyingOptions WHERE buyingOption = \"$buyingOption\";";
+      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue; } 
+      $buyingOption_resp = $conn->query($sql);
+      
+      $buyingOption_row = $buyingOption_resp->fetch_assoc();
+
+      print_r($buyingOption_row['id']);
+      print_r("<br>");
+      $buyingOption_id = $buyingOption_row['id'];
+
+      $sql = "INSERT INTO product_buyingoptions_junction (itemID, buyingOptionID) values ('$itemId','$buyingOption_id');";
+      if ($conn->query($sql) === FALSE) { }
     }
 
-    $sql = '';
-    $sql .=  "INSERT INTO auctions (itemID, productName, highestBid, currency, thumbnailPhotoURL, sellerUsername, sellerFeedbackPercentage, itemCondition, bidCount,  auctionEndTime, buyingOptions, listingStatus,) values
-                                  (\"$itemId\", \"$productName\", $highestBid, \"$currency\",\"$thumbnailPhotoURL\", \"$sellerUsername\", $sellerFeedbackPercentage, \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$buyingOptions\", \"$listingStatus\"); ";
-    print_r($sql);
-    if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
-    } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+    // Populate the categories Table - Many to Many relation
+    foreach($item->categories as $category) {
+      $categoryId = $category->categoryId;
+      $query_sql = "SELECT * from categories WHERE id = $categoryId;";
+      $query_resp = $conn->query($query_sql);
+      if($query_resp->num_rows == 0) {
+        $sql = "INSERT INTO categories (id) values ('$categoryId');";
+        if ($conn->query($sql) === FALSE) { }
+      }
+
+      $sql = "SELECT id from categories WHERE id = $categoryId;";
+      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue;}
+      $category_resp =  $conn->query($sql);
+
+      $category_row = $category_resp->fetch_assoc();
+      $category_id = $category_row['id'];
+
+      $sql = "INSERT INTO product_category_junction (itemID, categoryID) values ('$itemId','$category_id');";
+      if ($conn->query($sql) === FALSE) {  }
     }
-    echo "<br><br><br><br><br>";
   }
 }
+
+echo '<h2>Finished update!</h2>';
 ?>
