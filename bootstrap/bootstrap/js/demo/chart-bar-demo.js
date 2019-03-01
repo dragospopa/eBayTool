@@ -35,7 +35,7 @@ var myBarChart = new Chart(ctx, {
     labels: ["January", "February", "March", "April", "May", "June"],
     datasets: [{
       label: "Revenue",
-      backgroundColor: "#4e73df",
+      backgroundColor: ["#4e73df", "#4e73df", "#4e73df", "#4e73df", "#4e73df", "#4e73df"],
       hoverBackgroundColor: "#2e59d9",
       borderColor: "#4e73df",
       data: [4215, 5312, 6251, 7841, 9821, 14984],
@@ -109,3 +109,6 @@ var myBarChart = new Chart(ctx, {
     },
   }
 });
+console.log(myBarChart);
+myBarChart.data.datasets[0].backgroundColor[2] = "#1cc88a";
+myBarChart.update();
