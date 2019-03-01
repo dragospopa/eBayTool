@@ -98,13 +98,7 @@ if ($resp->ack == "Success") {
     // For each SearchResultItem node, add it to database.
     $sql = '';
     $sql .=  "INSERT INTO products (name, price, url) values (\"$title\", $price, \"$link\");";
-  /*
-    if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
-    } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
-*/
+
     // For each SearchResultItem node, build a link and append it to $results
     $results .= "<tr><td><img src=\"$pic\"></td><td><a href=\"$link\">$title</a>$query</td></tr>";
   }
