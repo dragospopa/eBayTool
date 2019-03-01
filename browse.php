@@ -86,7 +86,7 @@ if ($err) {
     if($query_resp->num_rows != 0) { 
       $row = $query_resp->fetch_assoc();
       
-      if (($row->highestBid != $highestBid) || ($row->bidCount != $bidCount)){
+      if (($row['highestBid'] != $highestBid) || ($row['bidCount'] != $bidCount)){
         $sql = 'UPDATE items set highestBid = $highestBid, bidCount = $bidCount, where itemID = $itemId;';
         if ($conn->query($sql) == TRUE){}
       }
