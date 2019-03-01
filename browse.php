@@ -162,8 +162,9 @@ if ($err) {
       }
 
       $sql = "SELECT id from buyingOptions WHERE buyingOption = \"$buyingOption\";";
-      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; }
-      else $buyingOption_resp = $conn->query($sql);
+      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue; } 
+      $buyingOption_resp = $conn->query($sql);
+      
       $buyingOption_row = $buyingOption_resp->fetch_assoc();
 
       print_r($buyingOption_row['id']);
@@ -181,18 +182,18 @@ if ($err) {
       $query_resp = $conn->query($query_sql);
       if($query_resp->num_rows == 0) {
         $sql = "INSERT INTO categories (id) values ('$categoryId');";
-        if ($conn->query($sql) === FALSE) { /*echo "Error: " . $sql . "<br>" . $conn->error;*/ }
+        if ($conn->query($sql) === FALSE) { }
       }
 
       $sql = "SELECT id from categories WHERE id = $categoryId;";
-      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; }
+      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue;}
       $category_resp =  $conn->query($sql);
 
       $category_row = $category_resp->fetch_assoc();
       $category_id = $category_row['id'];
 
       $sql = "INSERT INTO product_category_junction (itemID, categoryID) values ('$itemId','$category_id');";
-      if ($conn->query($sql) === FALSE) { /*echo "Error: " . $sql . "<br>" . $conn->error;*/ }
+      if ($conn->query($sql) === FALSE) {  }
     }
   }
 }
