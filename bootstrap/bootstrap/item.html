@@ -17,6 +17,11 @@
 
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.css" rel="stylesheet">
+
+  <script src="js/demo/chart-area-demo.js"></script>
+  <script src="js/demo/chart-pie-demo.js"></script>
+  <script src="js/demo/chart-bar-demo.js"></script>
+
   <script>
 // Set the date we're counting down to
 var countDownDate = new Date("Jun 5, 2019 15:37:25").getTime();
@@ -46,6 +51,22 @@ var x = setInterval(function() {
     document.getElementById("demo").innerHTML = "EXPIRED";
   }
 }, 1000);
+
+// function getHistogram(){
+//   myAjax();
+// }
+
+// var histData;
+
+// function myAjax(){
+//   $.ajax({
+//     type: "POST",
+//     url: 'search.php',
+//     success: function(data){
+//       histData = data;
+//     }
+//   });
+// }
 </script>
 
 </head>
@@ -149,6 +170,9 @@ var x = setInterval(function() {
 
                       <br/>
                       <br/>
+                      <button id = "histButton", class = "d-none d-sm-inline-block btn btn-primary shadow-sm col-g-2", onclick="getHistogram()">Update Histogram</button>
+                      <br>
+                      <br>
                       <div class="item-bar-chart">
                         <div class="card-header">
                           <h6 class="m-0 font-weight-bold text-primary">How does this auction compare with others?</h6>
