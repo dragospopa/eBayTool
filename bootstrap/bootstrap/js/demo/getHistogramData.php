@@ -19,6 +19,8 @@ function getHistogram(){
         }
     }
 
+    return implode(" ", $data);
+
     $maxVal = max($priceDistribution);
     $minVal = min($priceDistribution);
 

@@ -16,7 +16,26 @@ function myAjax(){
     data: {query: "string"},
     success: function(data){
       //document.getElementById("histButton").style.background="red";
-      data = data.split(" ").map(Number);
+      data = data.split(" ").map(Number); // the raw numbers from the database - we need to transform this array 
+
+      var binWidth = 1 + 3.322 * Math.log(data.length) // uses Sturge's Rule
+      binWidth = Math.round(binWidth);
+
+      binWidth = Math.round((Math.max.apply(null, data) - Math.min.apply(null, data)) / binWidth);
+      //console.log(binWidth);
+
+      var roundedData = [];
+      for(var i =0; i < data.length; i++){
+        var x = Math.round(data[i] / binWidth ) * binWidth;
+        roundedData.push(x);
+      }
+
+      data = roundedData;
+      var currentHighestBid = document.getElementById("highestBid").innerHTML;
+      //currentHighestBid = currentHighestBid.map(Number);
+      currentHighestBid = Math.round(currentHighestBid / binWidth) * binWidth;
+      console.log(currentHighestBid);
+
       histLabels = [];
       histSize = [];
       var prev;
@@ -35,8 +54,13 @@ function myAjax(){
       var backColor = [];
       var length = histSize.length;
       for(var i = 0; i < length; i ++){
-        backColor.push("#4e73df");
+       if(histLabels[i] == currentHighestBid){
+          backColor.push("#00FF91");
+        }else{
+          backColor.push("#4e73df");
+        }
       }
+
       
       var ctx = document.getElementById("myBarChart");
       var myBarChart = new Chart(ctx, {
@@ -46,7 +70,7 @@ function myAjax(){
           datasets: [{
             label: "Auctions with this highest bid: ",
             backgroundColor: backColor,
-            hoverBackgroundColor: "#2e59d9",
+            hoverBackgroundColor: "#FFDE00",
             borderColor: "#4e73df",
             data: histSize,
           }],
@@ -122,6 +146,7 @@ function myAjax(){
 
     },
     error: function(data){
+      console.log("ERROR");
       document.getElementById("histButton").style.background="green";
       console.log(data);
     }
@@ -240,5 +265,5 @@ var ctx = document.getElementById("myBarChart");
 myAjax();
 
 console.log(myBarChart);
-myBarChart.data.datasets[0].backgroundColor[2] = "#1cc88a";
+//myBarChart.data.datasets[0].backgroundColor[2] = "#1cc88a";
 myBarChart.update();
