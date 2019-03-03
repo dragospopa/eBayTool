@@ -2,7 +2,9 @@
 <head>
 
 <link rel="stylesheet" type="text/css" href="ss-styles.css">
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 <title>eBay Search Results for <?php echo $query; ?></title>
 <script>
@@ -22,16 +24,14 @@ input.addEventListener("keyup", function(event) {
 </script>
 
 <script>
-
-
-function search(){ 
+function search(){
   myAjax();
   getSearchQuery();
 }
 
 
 function getSearchQuery(){
-    var query = "eBay Search Results for "; 
+    var query = "eBay Search Results for ";
     query = query + document.getElementById("search-txt").value;
     document.getElementById("query").innerHTML = query;
 }
@@ -48,12 +48,20 @@ function myAjax() {
       console.log(document.querySelector('.freeShippingOnly:checked').value);
  }
 
+ $(function()
+ {
+   $("#search-txt").autocomplete({
+     source: "search_autosuggestion.php",
+     minlength:2,
+   });
+ });
+
 </script>
 </head>
 
 <body>
 
-<div class="container">
+<div class="auto-widget">
 
 <input name="search-txt" type="text" maxlength="512" id="search-txt"/>
 <button id="search-btn" onclick="search()">Search and add to db</button>
