@@ -63,7 +63,8 @@ if ($conn->query($sql) === FALSE) {
                       <br/>
                       <div class="text-dark listing-text">
                       <span>Condition: <span class="listing-extra-values">'.$itemCondition.'</span></span><br>
-                      <span>Auction ends in: <span class="listing-extra-values" id=\'countdown\'></span></span>
+                      <span>Auction ends in: <span class="countdown listing-extra-values"></span></span>
+                      <span class="auctionEndTime" style="display:none">'.$auctionEndTime.'</span>
                     </div>
                     </div>
                   </div>
