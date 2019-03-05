@@ -71,16 +71,20 @@ window.onload = function() {
 <script>
 
 function search(){
-  // console.log("cmon");
-  document.getElementById("ui-id-1").style.display = "none";
-  myAjax();
+  console.log("cmon");
+  var suggestionBox = document.getElementById("ui-id-1");
+  if(suggestionBox) {
+    suggestionBox.style.display = "none";
+  }
   getSearchQuery();
+  myAjax();
+  
 }
 
 function getSearchQuery(){
-    var query = "eBay Search Results for ";
-    query = query + document.getElementById("search-txt").value;
-    document.getElementById("query").innerHTML = query;
+    var query = 'Search Results for "';
+    query = query + document.getElementById("search-txt").value + '"';
+    document.getElementById("query").innerText = query;
 }
 
 function myAjax() {
@@ -156,7 +160,7 @@ function myAjax() {
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h5 class="mb-0 text-gray-800">Auction results for "Iphone X"</h5>
+            <h5 id="query" class="mb-0 text-gray-800"></h5>
           </div>
 
           <!-- Content Row -->
