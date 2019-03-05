@@ -30,6 +30,8 @@ if ($conn->query($sql) === FALSE) {
     $auctionEndTime = $item_row['auctionEndTime'];
     $sellerFeedbackPercentage = $item_row['feedbackPercentage'];
     $sellerFeedbackPercentage = number_format($sellerFeedbackPercentage, 1, '.', '');
+
+    $url = 'item.php?itemName='.$itemName.'&highestBid='.$highestBid.'&bidCount='.$bidCount.'&thumbnailPhotoURL='.$thumbnailPhotoURL.'&sellerUsername='.$sellerUsername.'&currency='.$currency.'&itemCondition='.$itemCondition.'&auctionEndTime='.$auctionEndTime.'&sellerFeedbackPercentage='.$sellerFeedbackPercentage;
     
     $results = '
             <div class="col-xl-12 col-12">
@@ -37,11 +39,11 @@ if ($conn->query($sql) === FALSE) {
                 <!-- Card Body -->
                 <div class="card-body row">
                   <div class="chart-pie col-3">
-                    <img class="listing-img" src="'.$thumbnailPhotoURL.'"/>
+                    <a href="'.$url.'"><img class="listing-img" src="'.$thumbnailPhotoURL.'"/></a>
                   </div>
                   <div class="col">
                     <div class="card-body">
-                      <h5 class="listing-title font-weight-bold text-dark text-uppercase mb-0">'.$itemName.'</h5>
+                      <a href="'.$url.'"><h5 class="listing-title font-weight-bold text-dark text-uppercase mb-0">'.$itemName.'</h5></a>
                       <div class="listing-seller mb-3">sold by '.$sellerUsername.' <span class="listing-seller-score">| '.$sellerFeedbackPercentage.'% Positive feedback </span></div>
 
                       <div class="text-dark">
