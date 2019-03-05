@@ -6,80 +6,8 @@ $conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_dat
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-}
+} 
 
-$query =  $_POST['query'];
-
-$sql = "select * from items as i, sellers as s where i.itemName like '%$query%' and s.username = i.sellerUsername;";
-
-if ($conn->query($sql) === FALSE) {
-  echo "Error: " . $sql . "<br>" . $conn->error;
-} else{
-
-  $items_resp = $conn->query($sql);
-  while($item_row = $items_resp->fetch_assoc()){
-    //print_r($item_row);
-    $itemName = $item_row['itemName'];
-    $highestBid = $item_row['highestBid'];
-    $highestBid = number_format($highestBid, 2, '.', '');
-    $bidCount = $item_row['bidCount'];
-    $thumbnailPhotoURL = $item_row['thumbnailPhotoURL'];
-    $sellerUsername = $item_row['sellerUsername'];
-    $currency = $item_row['currency'];
-    $itemCondition = $item_row['itemCondition'];
-    $auctionEndTime = $item_row['auctionEndTime'];
-    $sellerFeedbackPercentage = $item_row['feedbackPercentage'];
-    $sellerFeedbackPercentage = number_format($sellerFeedbackPercentage, 1, '.', '');
-    
-    $results = '
-            <div class="col-xl-12 col-12">
-              <div class="card shadow mb-2">
-                <!-- Card Body -->
-                <div class="card-body row">
-                  <div class="chart-pie col-3">
-                    <img class="listing-img" src="'.$thumbnailPhotoURL.'"/>
-                  </div>
-                  <div class="col">
-                    <div class="card-body">
-                      <h5 class="listing-title font-weight-bold text-dark text-uppercase mb-0">'.$itemName.'</h5>
-                      <div class="listing-seller mb-3">sold by '.$sellerUsername.' <span class="listing-seller-score">| '.$sellerFeedbackPercentage.'% Positive feedback </span></div>
-
-                      <div class="text-dark">
-                        <span class="listing-price-bid-description">Highest Bid:</span>
-                        <span class="listing-price-bid listing-price-bid-currency">'.$currency.'</span><!-- commented to remove whitespace on page
-                     --><span class="listing-price-bid listing-price-bid-whole">'.$highestBid.'</span><!--  commented to remove whitespace on page
-                     --><span class="listing-price-bid listing-price-bid-currency"></span>
-                      </div>
-
-                      <div class="listing-price-fixed">
-                        <span class="listing-price-fixed-description">Buy it now: </span>
-                        <span class="listing-price-fixed-currency">$</span><!-- commented to remove whitespace on page
-                     --><span class="listing-price-fixed-whole">1000</span><!--  commented to remove whitespace on page
-                     --><span class="listing-price-fixed-currency">00</span>
-                      </div>
-                      <br/>
-                      <div class="text-dark listing-text">
-                      <span>Condition: <span class="listing-extra-values">'.$itemCondition.'</span></span><br>
-                      <span>Auction ends in: <span class="listing-extra-values" id=\'countdown\'></span></span>
-                    </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>';
-    echo $results;
-  }
-}
-
-//echo $items_resp;
-/*if ($items_resp->num_rows==0){
-    echo "No results";
-} else {
-    //while(){
-    //  echo $item_row;
-   // }
-}*/
-/*
 // API request variables
 $endpoint = 'http://svcs.ebay.com/services/search/FindingService/v1';  // URL to call
 $version = '1.0.0';  // API version supported by your application
@@ -179,8 +107,8 @@ if ($resp->ack == "Success") {
 else {
   $results  = "<h3>Oops! The request was not successful. Make sure you are using valid filters.</h3>";
 }
-*/
 
+echo $results;
 
 
 
