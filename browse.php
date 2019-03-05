@@ -82,10 +82,10 @@ if ($err) {
 
     $query_sql = "SELECT * from items WHERE itemID = $itemId;";
     $query_resp = $conn->query($query_sql);
-    
-    if($query_resp->num_rows != 0) { 
+
+    if($query_resp->num_rows != 0) {
       $row = $query_resp->fetch_assoc();
-      
+
       if (($row['highestBid'] != $highestBid) || ($row['bidCount'] != $bidCount)){
         $sql = 'UPDATE items set highestBid = $highestBid, bidCount = $bidCount, where itemID = $itemId;';
         if ($conn->query($sql) == TRUE){}
@@ -162,9 +162,9 @@ if ($err) {
       }
 
       $sql = "SELECT id from buyingOptions WHERE buyingOption = \"$buyingOption\";";
-      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue; } 
+      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue; }
       $buyingOption_resp = $conn->query($sql);
-      
+
       $buyingOption_row = $buyingOption_resp->fetch_assoc();
 
       print_r($buyingOption_row['id']);
@@ -199,4 +199,5 @@ if ($err) {
 }
 
 echo '<h2>Finished update!</h2>';
+
 ?>

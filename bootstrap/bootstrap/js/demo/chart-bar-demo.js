@@ -2,6 +2,157 @@
 Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
 Chart.defaults.global.defaultFontColor = '#858796';
 
+var histLabels = ["January", "February", "March", "April", "May", "JULLY"] ;
+var histSize = [4215, 5312, 6251, 7841, 9821, 14984];
+
+function getHistogram(){
+  myAjax();
+}
+
+function myAjax(){
+  $.ajax({
+    type: "POST",
+    url: './js/demo/getHistogramData.php',
+    data: {query: "string"},
+    success: function(data){
+      //document.getElementById("histButton").style.background="red";
+      data = data.split(" ").map(Number); // the raw numbers from the database - we need to transform this array 
+
+      var binWidth = 1 + 3.322 * Math.log(data.length) // uses Sturge's Rule
+      binWidth = Math.round(binWidth);
+
+      binWidth = Math.round((Math.max.apply(null, data) - Math.min.apply(null, data)) / binWidth);
+      //console.log(binWidth);
+
+      var roundedData = [];
+      for(var i =0; i < data.length; i++){
+        var x = Math.round(data[i] / binWidth ) * binWidth;
+        roundedData.push(x);
+      }
+
+      data = roundedData;
+      var currentHighestBid = document.getElementById("highestBid").innerHTML;
+      //currentHighestBid = currentHighestBid.map(Number);
+      currentHighestBid = Math.round(currentHighestBid / binWidth) * binWidth;
+      console.log(currentHighestBid);
+
+      histLabels = [];
+      histSize = [];
+      var prev;
+      data.sort();
+
+      for(var i = 0; i < data.length; i++){
+        if(data[i] !== prev){
+          histLabels.push(data[i]);
+          histSize.push(1);
+        }else{
+          histSize[histSize.length - 1]++;
+        }
+        prev = data[i];
+      }
+
+      var backColor = [];
+      var length = histSize.length;
+      for(var i = 0; i < length; i ++){
+       if(histLabels[i] == currentHighestBid){
+          backColor.push("#00FF91");
+        }else{
+          backColor.push("#4e73df");
+        }
+      }
+
+      
+      var ctx = document.getElementById("myBarChart");
+      var myBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: histLabels,
+          datasets: [{
+            label: "Auctions with this highest bid: ",
+            backgroundColor: backColor,
+            hoverBackgroundColor: "#FFDE00",
+            borderColor: "#4e73df",
+            data: histSize,
+          }],
+        },
+        options: {
+          maintainAspectRatio: false,
+          layout: {
+            padding: {
+              left: 10,
+              right: 25,
+              top: 25,
+              bottom: 0
+            }
+          },
+          // scales: {
+          //   xAxes: [{
+          //     time: {
+          //       unit: 'month'
+          //     },
+          //     gridLines: {
+          //       display: false,
+          //       drawBorder: false
+          //     },
+          //     ticks: {
+          //       maxTicksLimit: 6
+          //     },
+          //     maxBarThickness: 25,
+          //   }],
+          //   yAxes: [{
+          //     ticks: {
+          //       min: 0,
+          //       max: 15000,
+          //       maxTicksLimit: 5,
+          //       padding: 10,
+          //       // Include a dollar sign in the ticks
+          //       callback: function(value, index, values) {
+          //         return '$' + number_format(value);
+          //       }
+          //     },
+          //     gridLines: {
+          //       color: "rgb(234, 236, 244)",
+          //       zeroLineColor: "rgb(234, 236, 244)",
+          //       drawBorder: false,
+          //       borderDash: [2],
+          //       zeroLineBorderDash: [2]
+          //     }
+          //   }],
+          // },
+          legend: {
+            display: false
+          },
+          tooltips: {
+            titleMarginBottom: 10,
+            titleFontColor: '#6e707e',
+            titleFontSize: 14,
+            backgroundColor: "rgb(255,255,255)",
+            bodyFontColor: "#858796",
+            borderColor: '#dddfeb',
+            borderWidth: 1,
+            xPadding: 15,
+            yPadding: 15,
+            displayColors: false,
+            caretPadding: 10,
+            callbacks: {
+              label: function(tooltipItem, chart) {
+                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                return datasetLabel  + number_format(tooltipItem.yLabel);
+              }
+            }
+          },
+        }
+      });
+
+    },
+    error: function(data){
+      console.log("ERROR");
+      document.getElementById("histButton").style.background="green";
+      console.log(data);
+    }
+  });
+}
+
 function number_format(number, decimals, dec_point, thousands_sep) {
   // *     example: number_format(1234.56, 2, ',', ' ');
   // *     return: '1 234,56'
@@ -29,83 +180,90 @@ function number_format(number, decimals, dec_point, thousands_sep) {
 
 // Bar Chart Example
 var ctx = document.getElementById("myBarChart");
-var myBarChart = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [{
-      label: "Revenue",
-      backgroundColor: "#4e73df",
-      hoverBackgroundColor: "#2e59d9",
-      borderColor: "#4e73df",
-      data: [4215, 5312, 6251, 7841, 9821, 14984],
-    }],
-  },
-  options: {
-    maintainAspectRatio: false,
-    layout: {
-      padding: {
-        left: 10,
-        right: 25,
-        top: 25,
-        bottom: 0
-      }
-    },
-    scales: {
-      xAxes: [{
-        time: {
-          unit: 'month'
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false
-        },
-        ticks: {
-          maxTicksLimit: 6
-        },
-        maxBarThickness: 25,
-      }],
-      yAxes: [{
-        ticks: {
-          min: 0,
-          max: 15000,
-          maxTicksLimit: 5,
-          padding: 10,
-          // Include a dollar sign in the ticks
-          callback: function(value, index, values) {
-            return '$' + number_format(value);
-          }
-        },
-        gridLines: {
-          color: "rgb(234, 236, 244)",
-          zeroLineColor: "rgb(234, 236, 244)",
-          drawBorder: false,
-          borderDash: [2],
-          zeroLineBorderDash: [2]
-        }
-      }],
-    },
-    legend: {
-      display: false
-    },
-    tooltips: {
-      titleMarginBottom: 10,
-      titleFontColor: '#6e707e',
-      titleFontSize: 14,
-      backgroundColor: "rgb(255,255,255)",
-      bodyFontColor: "#858796",
-      borderColor: '#dddfeb',
-      borderWidth: 1,
-      xPadding: 15,
-      yPadding: 15,
-      displayColors: false,
-      caretPadding: 10,
-      callbacks: {
-        label: function(tooltipItem, chart) {
-          var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
-        }
-      }
-    },
-  }
-});
+
+// var myBarChart = new Chart(ctx, {
+//   type: 'bar',
+//   data: {
+//     labels: histLabels,
+//     datasets: [{
+//       label: "Revenue",
+//       backgroundColor: ["#4e73df", "#4e73df", "#4e73df", "#4e73df", "#4e73df", "#4e73df"],
+//       hoverBackgroundColor: "#2e59d9",
+//       borderColor: "#4e73df",
+//       data: [4215, 5312, 6251, 7841, 9821, 14984],
+//     }],
+//   },
+//   options: {
+//     maintainAspectRatio: false,
+//     layout: {
+//       padding: {
+//         left: 10,
+//         right: 25,
+//         top: 25,
+//         bottom: 0
+//       }
+//     },
+//     scales: {
+//       xAxes: [{
+//         time: {
+//           unit: 'month'
+//         },
+//         gridLines: {
+//           display: false,
+//           drawBorder: false
+//         },
+//         ticks: {
+//           maxTicksLimit: 6
+//         },
+//         maxBarThickness: 25,
+//       }],
+//       yAxes: [{
+//         ticks: {
+//           min: 0,
+//           max: 15000,
+//           maxTicksLimit: 5,
+//           padding: 10,
+//           // Include a dollar sign in the ticks
+//           callback: function(value, index, values) {
+//             return '$' + number_format(value);
+//           }
+//         },
+//         gridLines: {
+//           color: "rgb(234, 236, 244)",
+//           zeroLineColor: "rgb(234, 236, 244)",
+//           drawBorder: false,
+//           borderDash: [2],
+//           zeroLineBorderDash: [2]
+//         }
+//       }],
+//     },
+//     legend: {
+//       display: false
+//     },
+//     tooltips: {
+//       titleMarginBottom: 10,
+//       titleFontColor: '#6e707e',
+//       titleFontSize: 14,
+//       backgroundColor: "rgb(255,255,255)",
+//       bodyFontColor: "#858796",
+//       borderColor: '#dddfeb',
+//       borderWidth: 1,
+//       xPadding: 15,
+//       yPadding: 15,
+//       displayColors: false,
+//       caretPadding: 10,
+//       callbacks: {
+//         label: function(tooltipItem, chart) {
+//           var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+//           return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+//         }
+//       }
+//     },
+//   }
+// });
+
+myAjax();
+
+console.log(myBarChart);
+//myBarChart.data.datasets[0].backgroundColor[2] = "#1cc88a";
+myBarChart.update();
