@@ -48,11 +48,13 @@ var x = setInterval(function() {
 
 <script>
 window.onload = function() {
+  search();
   var input = document.getElementById("search-txt");
-
-
-  console.log(input);
   input.addEventListener("keyup", function(event) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    console.log("preventium leviosa");
+    // Number 13 is the "Enter" key on the keyboard
     if (event.keyCode === 13) {
       // Trigger the button element with a click
       document.getElementById("search-btn").click();
@@ -61,10 +63,6 @@ window.onload = function() {
       // search();
       return false;
     }
-    // Cancel the default action, if needed
-    event.preventDefault();
-    console.log("preventium leviosa");
-    // Number 13 is the "Enter" key on the keyboard
     
   });
 }
@@ -73,7 +71,8 @@ window.onload = function() {
 <script>
 
 function search(){
-  console.log("cmon");
+  // console.log("cmon");
+  document.getElementById("ui-id-1").style.display = "none";
   myAjax();
   getSearchQuery();
 }
@@ -137,7 +136,7 @@ function myAjax() {
               </div>
               <div class="sidebar-brand-text mx-3">eBay Auctioneer</div>
             </a>
-          <form onkeypress='return event.keyCode != 13' class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+          <form onkeypress='if(event.keyCode == 13) search()' onSubmit="return false;" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
 
             <div class="input-group">
               <input id="search-txt" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" >
