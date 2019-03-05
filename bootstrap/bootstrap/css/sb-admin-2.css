@@ -68,7 +68,7 @@ body {
   line-height: 1.5;
   color: #858796;
   text-align: left;
-  background-color: #fff;
+  background-color: #f8f9fc;
 }
 
 [tabindex="-1"]:focus {
@@ -11077,9 +11077,10 @@ a:focus {
 }
 
 .listing-img {
-  max-height: 210px;
+  /*max-height: 210px;*/
   display:block;
   margin: 0px auto;
+  min-height: 76%;
 }
 
 .listing-price-bid{
@@ -11144,9 +11145,10 @@ a:focus {
 }
 
 .item-img {
-  max-height: 550px;
+  /*max-height: 550px;*/
   display:block;
   margin: 0px auto;
+  min-height: 100%;
 }
 
 .item-card {
@@ -11164,7 +11166,7 @@ a:focus {
   background-clip: border-box;
   border: 1px solid #e3e6f0;
   border-radius: 0.35rem;
-  height: 650px;
+  height: 690px;
 }
 
 .item-price-bid{
@@ -11181,9 +11183,14 @@ a:focus {
   height: 150px !important;
 }
 
+#histButton {
+  font-size: 11px;
+  padding: 5px;
+}
+
 .input-icon {
   /*position: relative;*/
-  width: 100px;
+  width: 200px;
 }
 
 .input-icon > i {
@@ -11726,6 +11733,9 @@ a:focus {
 @media (min-width: 768px) {
   .chart-pie {
     height: calc(20rem - 43px) !important;
+  }
+  .item-chart-pie {
+    height: calc(30rem - 43px) !important;
   }
 }
 
