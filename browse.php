@@ -1,6 +1,5 @@
 <?php
 
-
 $conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_databosses", "ebayer");
 // Check connection
 if ($conn->connect_error) {
@@ -29,9 +28,6 @@ $endpoint .= "limit".urlencode($filters['limit']);
 foreach($filters['filter'] as $filter) {
   $endpoint .= "&filter=".urlencode($filter);
 }
-echo $endpoint;
-echo "<br><br><br>";
-echo "im done here<br><br>";
 
 $token_sql = "select * from tokens limit 1;";
 $tokens_result = $conn->query($token_sql);
@@ -54,9 +50,6 @@ if ($tokens_result->num_rows==0){
    } else { $auth_token = $token_row['auth_token']; }
 }
 
-print_r("hi<br>");
-
-
 curl_setopt_array($curl, array(
   CURLOPT_URL => $endpoint,
   CURLOPT_ENCODING => "",
@@ -74,41 +67,41 @@ curl_setopt_array($curl, array(
 $resp = curl_exec($curl);
 $err = curl_error($curl);
 curl_close($curl);
-echo "hi<br>";
+
 if ($err) {
   print_r($err);
   echo "cURL Error #:" . $err;
 } else {
-  //print_r($resp);
+
   $resp = json_decode($resp);
-  //print_r($resp->itemSummaries[0]);
+
   foreach($resp->itemSummaries as $item) {
     $itemId = substr($item->itemId, 3, -2);
+    $highestBid = $item->currentBidPrice->value;
+    $bidCount = $item->bidCount;
 
-
-    $query_sql = "SELECT * from auctions WHERE itemID = $itemId;";
+    $query_sql = "SELECT * from items WHERE itemID = $itemId;";
     $query_resp = $conn->query($query_sql);
-    if($query_resp->num_rows != 0) { continue; }
 
-    print_r($itemId);
+    if($query_resp->num_rows != 0) {
+      $row = $query_resp->fetch_assoc();
+
+      if (($row['highestBid'] != $highestBid) || ($row['bidCount'] != $bidCount)){
+        $sql = 'UPDATE items set highestBid = $highestBid, bidCount = $bidCount, where itemID = $itemId;';
+        if ($conn->query($sql) == TRUE){}
+      }
+    }
 
     $productName = $item->title;
-    $highestBid = $item->currentBidPrice->value;
     $currency = $item->currentBidPrice->currency;
 
-    if(isset($item->thumbnailImages[0]->imageUrl))
-        $thumbnailPhotoURL = $item->thumbnailImages[0]->imageUrl;
-      else {
-          $thumbnailPhotoURL="";
-      }
+    if(!isset($item->thumbnailImages[0]->imageUrl)) continue;
+    if(!isset($item->seller->username)) continue;
 
-    if(!isset($item->seller->username))
-            continue;
-
+    $thumbnailPhotoURL = $item->thumbnailImages[0]->imageUrl;
     $sellerUsername = $item->seller->username;
     $sellerFeedbackPercentage = $item->seller->feedbackScore;
     $itemCondition = $item->condition;
-    $bidCount = $item->bidCount;
 
     if (count($item->buyingOptions)>1) {
       $buyingOptions = 3;
@@ -117,11 +110,7 @@ if ($err) {
     } else {
       $buyingOptions = 2;
     }
-    //print_r($item->currentBidPrice->value);
-    //print_r($thumbnailPhotoURL);
-
     //Shopping API
-    print_r("<br><br>");
     $apicall  = "$endpointShopping?";
     $apicall .= "callname=GetItemStatus&";
     $apicall .= "responseencoding=JSON&";
@@ -129,8 +118,6 @@ if ($err) {
     $apicall .= "siteid=0&";
     $apicall .= "version=967&";
     $apicall .= "ItemID=$itemId";
-    //print_r($apicall);
-    //$resp_shop = simplexml_load_file($apicall);
 
    $ch = curl_init();
    curl_setopt_array($ch, array(
@@ -153,63 +140,64 @@ if ($err) {
 
    $response = json_decode($response);
 
-  // print_r ($response->Item[0]->EndTime);
-
-    //print_r($response);
-
     $auctionEndTime  =  $response->Item[0]->EndTime;
     $listingStatus = $response->Item[0]->ListingStatus;
 
-    //print_r ($response);
-    //print_r($auctionEndTime);
-    //print_r($listingStatus);
+    $auction_sql = "INSERT INTO items (itemID, itemName, highestBid, currency, thumbnailPhotoURL, sellerUsername, itemCondition, bidCount,  auctionEndTime, listingStatus) values
+                                  (\"$itemId\", \"$productName\", $highestBid, \"$currency\",\"$thumbnailPhotoURL\", \"$sellerUsername\", \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$listingStatus\"); ";
+    $query_r = $conn->query($auction_sql);
+
+    $seller_sql = "INSERT INTO sellers (username, feedbackPercentage) values (\"$sellerUsername\", $sellerFeedbackPercentage);";
+    $query_r = $conn->query($seller_sql);
 
 
-    $sql = '';
+    // Populate the buyingOptions Table - Many to Many relation
+    foreach($item->buyingOptions as $buyingOption) {
+      $query_sql = "SELECT * from buyingOptions where buyingOption = \"$buyingOption\"";
+      $query_resp = $conn->query($query_sql);
 
-    $sql .=  "INSERT INTO auctions (itemID, productName, highestBid, currency, thumbnailPhotoURL, sellerUsername, sellerFeedbackPercentage, itemCondition, bidCount,  auctionEndTime, buyingOptions, listingStatus) values
-                                  (\"$itemId\", \"$productName\", $highestBid, \"$currency\",\"$thumbnailPhotoURL\", \"$sellerUsername\", $sellerFeedbackPercentage, \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$buyingOptions\", \"$listingStatus\"); ";
+      if($query_resp->num_rows == 0){
+        $sql = "INSERT INTO buyingOptions (buyingOption) values ('$buyingOption');";
+        if ($conn->query($sql) === FALSE) { }
+      }
 
-    // else {
-    //   $sql .=  "INSERT INTO auctions (itemID, productName, highestBid, currency, thumbnailPhotoURL, sellerUsername, sellerFeedbackPercentage, itemCondition, bidCount,  auctionEndTime, buyingOptions, listingStatus) values
-    //                                 (\"$itemId\", \"$productName\", $highestBid, \"$currency\", , \"$sellerUsername\", $sellerFeedbackPercentage, \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$buyingOptions\", \"$listingStatus\"); ";
-    // }
-    $query_r = $conn->query($sql);
-    // urmeaza chestia complicata
+      $sql = "SELECT id from buyingOptions WHERE buyingOption = \"$buyingOption\";";
+      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue; }
+      $buyingOption_resp = $conn->query($sql);
 
-    foreach($item->categories as $category)
-    {
-      print_r ($category);
-      print_r ("<br>");
+      $buyingOption_row = $buyingOption_resp->fetch_assoc();
+
+      print_r($buyingOption_row['id']);
+      print_r("<br>");
+      $buyingOption_id = $buyingOption_row['id'];
+
+      $sql = "INSERT INTO product_buyingoptions_junction (itemID, buyingOptionID) values ('$itemId','$buyingOption_id');";
+      if ($conn->query($sql) === FALSE) { }
+    }
+
+    // Populate the categories Table - Many to Many relation
+    foreach($item->categories as $category) {
       $categoryId = $category->categoryId;
       $query_sql = "SELECT * from categories WHERE id = $categoryId;";
       $query_resp = $conn->query($query_sql);
-
       if($query_resp->num_rows == 0) {
-        $sql = '';
-        $sql .= "INSERT INTO categories (id) values ('$categoryId');";
-        if ($conn->query($sql) === FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; }
-
+        $sql = "INSERT INTO categories (id) values ('$categoryId');";
+        if ($conn->query($sql) === FALSE) { }
       }
 
       $sql = "SELECT id from categories WHERE id = $categoryId;";
+      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue;}
       $category_resp =  $conn->query($sql);
 
       $category_row = $category_resp->fetch_assoc();
       $category_id = $category_row['id'];
 
       $sql = "INSERT INTO product_category_junction (itemID, categoryID) values ('$itemId','$category_id');";
-      if ($conn->query($sql) === FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; }
+      if ($conn->query($sql) === FALSE) {  }
     }
-
-
-    if ($conn->query($sql) === TRUE) {
-        echo "New record created successfully";
-    } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
-    }
-    echo "<br><br><br><br><br>";
   }
 }
+
+echo '<h2>Finished update!</h2>';
 
 ?>
