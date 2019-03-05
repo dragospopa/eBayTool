@@ -1,6 +1,6 @@
 <?php
 
-function getHistogram(){
+function getHistogram($query){
     $conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_databosses", "ebayer");
 
     if ($conn->connect_error) {
@@ -9,13 +9,19 @@ function getHistogram(){
 
     $sql = '';
     $sql .= "SELECT * FROM items";  
+    //$sql .= "select * from items where itemName like " ."%".$query."%;"; 
+    //$sql .= "select * from items where itemName like '%$query%';";
 
     $data = array();
 
     $result = $conn->query($sql);
     if($result->num_rows > 0){
         while ($row = $result->fetch_assoc()){
-            array_push($data, $row['highestBid']);
+            $in = strpos(strtolower($row['itemName']),strtolower($query));
+            if( $in !== false){
+                array_push($data, $row['highestBid']);
+            }
+            //array_push($data, $row['highestBid']);
         }
     }
 
@@ -38,9 +44,11 @@ function getHistogram(){
 
 }
 
-$req = $_POST['query'];
-if($req == "string" ){
-    $result = getHistogram();
+$req = $_POST['action'];
+$query = $_POST['query'];
+$try = $_POST['try'];
+if($req == "update" ){
+    $result = getHistogram($query);
     echo $result;
 }else{
     echo "1 2 3 4";

@@ -31,7 +31,7 @@ if ($conn->query($sql) === FALSE) {
     $sellerFeedbackPercentage = $item_row['feedbackPercentage'];
     $sellerFeedbackPercentage = number_format($sellerFeedbackPercentage, 1, '.', '');
 
-    $url = 'item.php?itemName='.$itemName.'&highestBid='.$highestBid.'&bidCount='.$bidCount.'&thumbnailPhotoURL='.$thumbnailPhotoURL.'&sellerUsername='.$sellerUsername.'&currency='.$currency.'&itemCondition='.$itemCondition.'&auctionEndTime='.$auctionEndTime.'&sellerFeedbackPercentage='.$sellerFeedbackPercentage;
+    $url = 'item.php?itemName='.$itemName.'&highestBid='.$highestBid.'&bidCount='.$bidCount.'&thumbnailPhotoURL='.$thumbnailPhotoURL.'&sellerUsername='.$sellerUsername.'&currency='.$currency.'&itemCondition='.$itemCondition.'&auctionEndTime='.$auctionEndTime.'&sellerFeedbackPercentage='.$sellerFeedbackPercentage.'&query='.$query;
     
     $results = '
             <div class="col-xl-12 col-12">

@@ -6,15 +6,24 @@ var histLabels = ["January", "February", "March", "April", "May", "JULLY"] ;
 var histSize = [4215, 5312, 6251, 7841, 9821, 14984];
 
 function getHistogram(){
-  myAjax();
+  var query = window.location.href;
+  query = query.split("query=")[1];
+  query = decodeURIComponent(query);
+  console.log("Original user query is : " + query);
+  myAjax(query);
+
+
 }
 
-function myAjax(){
+function myAjax(userQuery){
+  //console.log("BAA " + typeof userQuery);
   $.ajax({
     type: "POST",
     url: './js/demo/getHistogramData.php',
-    data: {query: "string"},
+    //data: {query: "string"},
+    data: {action: "update", query: userQuery, try: "try"},
     success: function(data){
+      console.log(data);
       //document.getElementById("histButton").style.background="red";
       data = data.split(" ").map(Number); // the raw numbers from the database - we need to transform this array 
 
@@ -34,7 +43,7 @@ function myAjax(){
       var currentHighestBid = document.getElementById("highestBid").innerHTML;
       //currentHighestBid = currentHighestBid.map(Number);
       currentHighestBid = Math.round(currentHighestBid / binWidth) * binWidth;
-      console.log(currentHighestBid);
+      //console.log(currentHighestBid);
 
       histLabels = [];
       histSize = [];
@@ -262,7 +271,7 @@ var ctx = document.getElementById("myBarChart");
 //   }
 // });
 
-myAjax();
+getHistogram();
 
 console.log(myBarChart);
 //myBarChart.data.datasets[0].backgroundColor[2] = "#1cc88a";
