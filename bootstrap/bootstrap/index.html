@@ -113,7 +113,7 @@ function myAjax() {
       <div id="content">
 
         <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+        <div id="main-logo">
 
           <!-- Sidebar Toggle (Topbar) -->
           <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -127,7 +127,7 @@ function myAjax() {
               <div class="sidebar-brand-text mx-3" style ="text-align:center">eBay Auctioneer</div>
             </a>
 
-        </nav>
+        </div>
 
          <!-- End of Topbar -->
 
@@ -140,7 +140,7 @@ function myAjax() {
 
               <div class="input-group">
 
-                <input id="search-txt" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" color = "white">
+                <input id="search-txt" type="text" class="main form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" color = "white" name="search">
                 <div class="input-group-append">
                   <button id="search-btn" class="btn btn-primary" type="button"  onclick="search()" >
                     <i class="fas fa-search fa-sm"></i>

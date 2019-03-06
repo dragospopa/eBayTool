@@ -11183,6 +11183,15 @@ a:focus {
   height: 150px !important;
 }
 
+.main {
+  background-color: white !important;
+}
+
+#main-logo {
+  margin-top: 250px;
+  margin-bottom: -75px;
+}
+
 #histButton {
   font-size: 11px;
   padding: 5px;
