@@ -12157,3 +12157,20 @@ footer.sticky-footer .copyright {
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
 }
+
+#frontPageLogo {
+  font-size: 3rem;
+  text-align: center;
+}
+
+#indexSearchBar {
+  width: 50%;
+  margin: auto 100px;
+}
+
+#parent{
+  text-align: center;
+  padding: 100px;
+  /* background-color: white; */
+}
+

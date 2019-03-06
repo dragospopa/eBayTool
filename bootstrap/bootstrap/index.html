@@ -120,11 +120,11 @@ function myAjax() {
             <i class="fa fa-bars"></i>
           </button>
           <!-- Topbar Search -->
-          <a id = "fronPageLogo" class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html" align="center" >
+          <a id = "frontPageLogo" class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html" style ="text-align:center">
               <div class="sidebar-brand-icon">
                 <i class="fas fa-tags"></i>
               </div>
-              <div class="sidebar-brand-text mx-3" align='center'>eBay Auctioneer</div>
+              <div class="sidebar-brand-text mx-3" style ="text-align:center">eBay Auctioneer</div>
             </a>
 
         </nav>
@@ -135,12 +135,12 @@ function myAjax() {
           <div class="row" id="search-results">
 
           <!-- Content Row -->
-          <div class="container-fluid">
-            <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="search.html" method = "get">
+          <div id = "parent" class="container-fluid">
+            <form  id= "indexSearchBar" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="search.html" method = "get">
 
-              <div id= "indexSearchBar" class="input-group">
+              <div class="input-group">
 
-                <input id="search-txt" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" >
+                <input id="search-txt" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" color = "white">
                 <div class="input-group-append">
                   <button id="search-btn" class="btn btn-primary" type="button"  onclick="search()" >
                     <i class="fas fa-search fa-sm"></i>
