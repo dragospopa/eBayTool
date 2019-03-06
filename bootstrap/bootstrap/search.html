@@ -9,67 +9,96 @@
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
   <!-- Custom styles for this template-->
   <link href="css/sb-admin-2.css" rel="stylesheet">
   <script>
 // Set the date we're counting down to
-var countDownDate = new Date("Jun 5, 2019 15:37:25").getTime();
 
-// Update the count down every 1 second
-var x = setInterval(function() {
+function initialiseCountdowns() {
+  // Update the count down every 1 second
+  var x = setInterval(function() {
 
-  // Get todays date and time
-  var now = new Date().getTime();
+    // Get todays date and time
+    var now = new Date().getTime();
 
-  // Find the distance between now and the count down date
-  var distance = countDownDate - now;
+    // Time calculations for days, hours, minutes and seconds
 
-  // Time calculations for days, hours, minutes and seconds
-  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-  // Output the result in an element with id="demo"
-  document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
-  + minutes + "m " + seconds + "s ";
+    // Output the result in an element with id="demo"
+    countdowns = document.getElementsByClassName("countdown");
+    endTimes = document.getElementsByClassName("auctionEndTime");
+    var distance;
+    var countDownDate;
+    var days;
+    var hours;
+    var minutes;
+    var seconds;
 
-  // If the count down is over, write some text
-  if (distance < 0) {
-    clearInterval(x);
-    document.getElementById("demo").innerHTML = "EXPIRED";
-  }
-}, 1000);
-</script>
-
-<script>
-var input = document.getElementById("search-txt");
-
-input.addEventListener("keyup", function(event) {
-  // Cancel the default action, if needed
-  event.preventDefault();
-  // Number 13 is the "Enter" key on the keyboard
-  if (event.keyCode === 13) {
-    // Trigger the button element with a click
-    document.getElementById("search-btn").click();
-  }
-});
-</script>
-<script>
-function search(){
-  myAjax();
-  getSearchQuery();
+    for(var i = 0; i < countdowns.length; i++) {
+      countDownDate = new Date(endTimes[i].innerHTML).getTime();
+      distance = countDownDate - now;
+      if(distance < 0) {
+        countdowns[i].innerHTML = "EXPIRED";
+      } else {
+        days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        countdowns[i].innerHTML = days + "d " + hours + "h "
+      + minutes + "m " + seconds + "s ";
+      }
+      
+    }
+  }, 1000);
 }
 
 
+window.onload = function() {
+  initialiseCountdowns();
+  search_parameter = window.location.search;
+  if(search_parameter) {
+    // search_parameter = decodeURIComponent(search_parameter);
+    search_parameter = decodeURIComponent(search_parameter.substr(1).replace(/\+/g, '%20').split("=")[1]);
+    console.log(search_parameter);
+
+    document.getElementById("search-txt").value = search_parameter;
+  }
+  search();
+  var input = document.getElementById("search-txt");
+  input.addEventListener("keyup", function(event) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    console.log("preventium leviosa");
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Trigger the button element with a click
+      document.getElementById("search-btn").click();
+      document.getElementById("ui-id-1").style.display = "none";
+      
+      // search();
+      return false;
+    }
+    
+  });
+}
+
+function search(){
+  var suggestionBox = document.getElementById("ui-id-1");
+  if(suggestionBox) {
+    suggestionBox.style.display = "none";
+  }
+  getSearchQuery();
+  myAjax();
+  
+}
+
 function getSearchQuery(){
-    var query = "eBay Search Results for ";
-    query = query + document.getElementById("search-txt").value;
-    document.getElementById("query").innerHTML = query;
+    var query = 'Search Results for "';
+    query = query + document.getElementById("search-txt").value + '"';
+    document.getElementById("query").innerText = query;
 }
 
 function myAjax() {
@@ -101,7 +130,7 @@ function myAjax() {
 
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-      <img src="img/sidebar.png"/>
+      <!-- <img src="img/sidebar.png"/> -->
     </ul>
     <!-- End of Sidebar -->
 
@@ -125,7 +154,7 @@ function myAjax() {
               </div>
               <div class="sidebar-brand-text mx-3">eBay Auctioneer</div>
             </a>
-          <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+          <form onkeypress='if(event.keyCode == 13) search()' onSubmit="return false;" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
 
             <div class="input-group">
               <input id="search-txt" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" >
@@ -145,7 +174,7 @@ function myAjax() {
 
           <!-- Page Heading -->
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h5 class="mb-0 text-gray-800">Auction results for "Iphone X"</h5>
+            <h5 id="query" class="mb-0 text-gray-800"></h5>
           </div>
 
           <!-- Content Row -->
@@ -153,7 +182,7 @@ function myAjax() {
 
           <!-- Content Row -->
 
-      </div>
+          </div>
     </div>
   </div>
 </div>

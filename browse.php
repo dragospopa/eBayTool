@@ -89,6 +89,18 @@ if ($err) {
       if (($row['highestBid'] != $highestBid) || ($row['bidCount'] != $bidCount)){
         $sql = 'UPDATE items set highestBid = $highestBid, bidCount = $bidCount, where itemID = $itemId;';
         if ($conn->query($sql) == TRUE){}
+
+        $sql='';
+        $sql = "INSERT INTO timestamps (bidTime) values NOW();";
+        if($conn->query($sql) == TRUE){}
+
+        $timestamp_query = "SELECT max(timeID) FROM timestamps;";
+        if($conn->query($timestamp_query)==TRUE){};
+
+        $timestampID = $timestamp_query->fetch_assoc();
+
+        $sql = "INSERT INTO product_timestamp_junction (timestampID, itemID,highestBid,bidCount) values(\"$timestampID\", \"$itemId\", \"$highestBid\", \"$bidCount\");";
+        if($conn->query($sql) == TRUE) {}
       }
     }
 
