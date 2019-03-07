@@ -1,5 +1,6 @@
 <?php
 $conn = new mysqli("ebayer.mysql.database.azure.com", "dragos@ebayer", "CDDG_databosses", "ebayer");
+
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -62,7 +63,6 @@ if ($err) {
   echo "cURL Error #:" . $err;
 } else {
   $resp = json_decode($resp);
-
   foreach($resp->itemSummaries as $item) {
     $itemId = substr($item->itemId, 3, -2);
     $highestBid = $item->currentBidPrice->value;
@@ -72,8 +72,16 @@ if ($err) {
     if($query_resp->num_rows != 0) {
       $row = $query_resp->fetch_assoc();
       if (($row['highestBid'] != $highestBid) || ($row['bidCount'] != $bidCount)){
-        $sql = 'UPDATE items set highestBid = $highestBid, bidCount = $bidCount, where itemID = $itemId;';
-        if ($conn->query($sql) == TRUE){}
+      //  $sql = 'UPDATE items set highestBid = $highestBid, bidCount = $bidCount, where itemID = $itemId;';
+        $sql = $conn->prepare ('UPDATE items set highestBid = ?, bidCount = ? where itemID = ?;');
+        if($sql==false)
+        {
+          trigger_error($conn->error, E_USER_ERROR);
+        }
+
+        $sql->bind_param('dii', $highestBid,$bidCount,$itemId);
+        $status = $sql->execute();
+        if ($status == false){trigger_error($sql->Error,E_USER_ERROR);}
         $sql='';
         $sql = "INSERT INTO timestamps (bidTime) values (NOW());";
         if($conn->query($sql) == FALSE){ echo "Error: " . $sql . "<br>" . $conn->error; continue; }
@@ -81,14 +89,22 @@ if ($err) {
         if($conn->query($timestamp_query)==FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; continue; };
         $timestamp_resp = $conn->query($timestamp_query);
         $timestamp_row = $timestamp_resp->fetch_assoc();
-
         $timestampID = $timestamp_row["max(timeID)"];
-
         print_r($itemId);
         print_r("     ");
+
         $sql='';
-        $sql = "INSERT INTO product_timestamp_junction (timestampID, itemID, highestBid, bidCount) values(\"$timestampID\", \"$itemId\", \"$highestBid\", \"$bidCount\");";
-        if($conn->query($sql) == FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; continue; }
+        $sql = $conn->prepare("INSERT INTO product_timestamp_junction (timestampID, itemID, highestBid, bidCount) values(?,?,?,?);");
+        if($sql==false)
+        {
+          trigger_error($conn->error, E_USER_ERROR);
+        }
+        $sql->bind_param("iidi", $timestampID,$itemId,$highestBid,$bidCount);
+        $sql->execute();
+        if($sql==false)
+        {
+          trigger_error($conn->error, E_USER_ERROR);
+        }
       }
     }
     $productName = $item->title;
@@ -134,11 +150,32 @@ if ($err) {
    $response = json_decode($response);
     $auctionEndTime  =  $response->Item[0]->EndTime;
     $listingStatus = $response->Item[0]->ListingStatus;
-    $auction_sql = "INSERT INTO items (itemID, itemName, highestBid, currency, thumbnailPhotoURL, sellerUsername, itemCondition, bidCount,  auctionEndTime, listingStatus) values
-                                  (\"$itemId\", \"$productName\", $highestBid, \"$currency\",\"$thumbnailPhotoURL\", \"$sellerUsername\", \"$itemCondition\", $bidCount, \"$auctionEndTime\", \"$listingStatus\"); ";
-    $query_r = $conn->query($auction_sql);
-    $seller_sql = "INSERT INTO sellers (username, feedbackPercentage) values (\"$sellerUsername\", $sellerFeedbackPercentage);";
-    $query_r = $conn->query($seller_sql);
+    $auction_sql =$conn->prepare("INSERT INTO items (itemID, itemName, highestBid, currency, thumbnailPhotoURL, sellerUsername, itemCondition, bidCount,  auctionEndTime, listingStatus) values
+                                  (?, ?, ?, ?,?, ?, ?, ?, ?, ?);");
+    $auction_sql->execute();
+    if($auction_sql==false)
+    {
+        trigger_error($conn->error, E_USER_ERROR);
+    }
+    $auction_sql ->bind_param("isddsssdss", $itemId, $productName, $highestBid, $currency,$thumbnailPhotoURL, $sellerUsername, $itemCondition, $bidCount, $auctionEndTime, $listingStatus);
+    $auction_sql->execute();
+    if($auction_sql==false)
+    {
+      trigger_error($conn->error, E_USER_ERROR);
+    }
+
+    $seller_sql = $conn->prepare("INSERT INTO sellers (username, feedbackPercentage) values (?, ?);");
+    if($seller_sql==false)
+    {
+      trigger_error($conn->error, E_USER_ERROR);
+    }
+    $seller_sql->bind_param("ss", $sellerUsername, $sellerFeedbackPercentage);
+    $seller_sql->execute();
+    if($seller_sql==false)
+    {
+      trigger_error($conn->error, E_USER_ERROR);
+    }
+
     // Populate the buyingOptions Table - Many to Many relation
     foreach($item->buyingOptions as $buyingOption) {
       $query_sql = "SELECT * from buyingOptions where buyingOption = \"$buyingOption\"";
@@ -162,9 +199,14 @@ if ($err) {
       $categoryId = $category->categoryId;
       $query_sql = "SELECT * from categories WHERE id = $categoryId;";
       $query_resp = $conn->query($query_sql);
+
+
       if($query_resp->num_rows == 0) {
-        $sql = "INSERT INTO categories (id) values ('$categoryId');";
-        if ($conn->query($sql) === FALSE) { }
+        $sql = $conn->prepare("INSERT INTO categories (id) values (?);");
+        $sql->bind_param("i",$categoryId);
+        $sql->execute();
+        if ($sql === FALSE) { trigger_error($conn->error,E_USER_ERROR);}
+
       }
       $sql = "SELECT id from categories WHERE id = $categoryId;";
       if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue;}
