@@ -9,7 +9,7 @@ function getHistogram(){
   var query = window.location.href;
   query = query.split("query=")[1];
   query = decodeURIComponent(query);
-  console.log("Original user query is : " + query);
+  console.log("Hereee");
   myAjax(query);
 }
 
@@ -21,7 +21,7 @@ function myAjax(userQuery){
     success: function(data){
       //document.getElementById("histButton").style.background="red";
       data = data.split(" ").map(Number); // the raw numbers from the database - we need to transform this array 
-
+      console.log(data);
       var binWidth = 1 + 3.322 * Math.log(data.length) // uses Sturge's Rule
       binWidth = Math.round(binWidth);
 
@@ -38,7 +38,7 @@ function myAjax(userQuery){
       var currentHighestBid = document.getElementById("highestBid").innerHTML;
       //currentHighestBid = currentHighestBid.map(Number);
       currentHighestBid = Math.round(currentHighestBid / binWidth) * binWidth;
-      console.log(currentHighestBid);
+      //console.log(currentHighestBid);
 
       histLabels = [];
       histSize = [];
@@ -65,7 +65,6 @@ function myAjax(userQuery){
         }
       }
 
-      
       var ctx = document.getElementById("myBarChart");
       var myBarChart = new Chart(ctx, {
         type: 'bar',
@@ -89,40 +88,43 @@ function myAjax(userQuery){
               bottom: 0
             }
           },
-          // scales: {
-          //   xAxes: [{
-          //     time: {
-          //       unit: 'month'
-          //     },
-          //     gridLines: {
-          //       display: false,
-          //       drawBorder: false
-          //     },
-          //     ticks: {
-          //       maxTicksLimit: 6
-          //     },
-          //     maxBarThickness: 25,
-          //   }],
-          //   yAxes: [{
-          //     ticks: {
-          //       min: 0,
-          //       max: 15000,
-          //       maxTicksLimit: 5,
-          //       padding: 10,
-          //       // Include a dollar sign in the ticks
-          //       callback: function(value, index, values) {
-          //         return '$' + number_format(value);
-          //       }
-          //     },
-          //     gridLines: {
-          //       color: "rgb(234, 236, 244)",
-          //       zeroLineColor: "rgb(234, 236, 244)",
-          //       drawBorder: false,
-          //       borderDash: [2],
-          //       zeroLineBorderDash: [2]
-          //     }
-          //   }],
-          // },
+          scales: {
+            // xAxes: [{
+            //   time: {
+            //     unit: 'month'
+            //   },
+            //   gridLines: {
+            //     display: false,
+            //     drawBorder: false
+            //   },
+            //   ticks: {
+            //     maxTicksLimit: 6
+            //   },
+            //   maxBarThickness: 25,
+            // }],
+            yAxes: [{
+              display: true,
+              ticks: {
+
+                //beginAtZero: true,
+                min: 0,
+                //max: 15000,
+                maxTicksLimit: 5,
+                //padding: 10,
+                // Include a dollar sign in the ticks
+                // callback: function(value, index, values) {
+                //   return '$' + number_format(value);
+                // }
+              }
+              // gridLines: {
+              //   color: "rgb(234, 236, 244)",
+              //   zeroLineColor: "rgb(234, 236, 244)",
+              //   drawBorder: false,
+              //   borderDash: [2],
+              //   zeroLineBorderDash: [2]
+              // }
+            }],
+          },
           legend: {
             display: false
           },
