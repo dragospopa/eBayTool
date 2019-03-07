@@ -101,13 +101,9 @@ if ($err) {
         $timestamp_resp = $conn->query($timestamp_query);
         $timestamp_row = $timestamp_resp->fetch_assoc();
 
-<<<<<<< HEAD
         $timestampID = $timestamp_row["max(timeID)"];
 
         print_r($timestampID);
-=======
-        print_r($timestamp_row);
->>>>>>> 632ad830a4ff3774a736b2d78d0fca9c7eea46d3
 
         $sql = "INSERT INTO product_timestamp_junction (timestampID, itemID, highestBid, bidCount) values(\"$timestampID\", \"$itemId\", \"$highestBid\", \"$bidCount\");";
         if($conn->query($sql) == FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; continue; }
