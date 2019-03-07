@@ -91,16 +91,22 @@ if ($err) {
         if ($conn->query($sql) == TRUE){}
 
         $sql='';
-        $sql = "INSERT INTO timestamps (bidTime) values NOW();";
-        if($conn->query($sql) == TRUE){}
+        $time_now = time();
+        $sql = "INSERT INTO timestamps (bidTime) values (NOW());";
+        if($conn->query($sql) == FALSE){ echo "Error: " . $sql . "<br>" . $conn->error; continue; }
 
         $timestamp_query = "SELECT max(timeID) FROM timestamps;";
-        if($conn->query($timestamp_query)==TRUE){};
+        if($conn->query($timestamp_query)==FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; continue; };
 
-        $timestampID = $timestamp_query->fetch_assoc();
+        $timestamp_resp = $conn->query($timestamp_query);
+        $timestamp_row = $timestamp_resp->fetch_assoc();
 
-        $sql = "INSERT INTO product_timestamp_junction (timestampID, itemID,highestBid,bidCount) values(\"$timestampID\", \"$itemId\", \"$highestBid\", \"$bidCount\");";
-        if($conn->query($sql) == TRUE) {}
+        $timestampID = $timestamp_row["max(timeID)"];
+
+        print_r($timestampID);
+
+        $sql = "INSERT INTO product_timestamp_junction (timestampID, itemID, highestBid, bidCount) values(\"$timestampID\", \"$itemId\", \"$highestBid\", \"$bidCount\");";
+        if($conn->query($sql) == FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; continue; }
       }
     }
 
