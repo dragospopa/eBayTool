@@ -178,27 +178,37 @@ if ($err) {
 
     // Populate the buyingOptions Table - Many to Many relation
     foreach($item->buyingOptions as $buyingOption) {
-      $query_sql = "SELECT * from buyingOptions where buyingOption = \"$buyingOption\"";
-      $query_resp = $conn->query($query_sql);
+      $query_sql = $conn->prepare("SELECT * from buyingOptions where buyingOption = ?;");
+      $query_sql->bind_param("i",$buyingOption);
+      $query_sql->execute();
+      $query_resp = $query_sql->get_result();
       if($query_resp->num_rows == 0){
-        $sql = "INSERT INTO buyingOptions (buyingOption) values ('$buyingOption');";
-        if ($conn->query($sql) === FALSE) { }
+        $sql = $conn->prepare("INSERT INTO buyingOptions (buyingOption) values (?);");
+        $sql->bind_param("i",$buyingOption);
+        $sql->execute() or trigger_error($sql->error, E_USER_ERROR);
       }
-      $sql = "SELECT id from buyingOptions WHERE buyingOption = \"$buyingOption\";";
-      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue; }
-      $buyingOption_resp = $conn->query($sql);
+      $sql = $conn->prepare("SELECT id from buyingOptions WHERE buyingOption = ?;");
+      $sql->bind_param("i", $buyingOption);
+      $sql->execute() or trigger_error($sql->error, E_USER_ERROR);
+
+      $buyingOption_resp = $sql->get_result();
       $buyingOption_row = $buyingOption_resp->fetch_assoc();
       print_r($buyingOption_row['id']);
       print_r("<br>");
       $buyingOption_id = $buyingOption_row['id'];
+
       $sql = "INSERT INTO product_buyingoptions_junction (itemID, buyingOptionID) values ('$itemId','$buyingOption_id');";
       if ($conn->query($sql) === FALSE) { }
+
+
     }
     // Populate the categories Table - Many to Many relation
     foreach($item->categories as $category) {
       $categoryId = $category->categoryId;
-      $query_sql = "SELECT * from categories WHERE id = $categoryId;";
-      $query_resp = $conn->query($query_sql);
+      $query_sql = $conn->prepare("SELECT * from categories WHERE id = ?;");
+      $query_sql->bind_param("i", $categoryId);
+      $query_sql->execute();
+      $query_resp = $query_sql->get_result();
 
 
       if($query_resp->num_rows == 0) {
@@ -208,13 +218,25 @@ if ($err) {
         if ($sql === FALSE) { trigger_error($conn->error,E_USER_ERROR);}
 
       }
-      $sql = "SELECT id from categories WHERE id = $categoryId;";
-      if ($conn->query($sql) == FALSE){echo "Error: " . $sql . "<br>" . $conn->error; continue;}
-      $category_resp =  $conn->query($sql);
-      $category_row = $category_resp->fetch_assoc();
+      $sql =$conn->prepare("SELECT id from categories WHERE id = ?;");
+      if($sql==false)
+      {
+        trigger_error($conn->error, E_USER_ERROR);
+      }
+      $sql->bind_param("i", $categoryId);
+      $sql->execute();
+      $result = $sql->get_result();
+
+      $category_row = $result->fetch_assoc();
       $category_id = $category_row['id'];
-      $sql = "INSERT INTO product_category_junction (itemID, categoryID) values ('$itemId','$category_id');";
-      if ($conn->query($sql) === FALSE) {  }
+      $sql = $conn->prepare("INSERT INTO product_category_junction (itemID, categoryID) values (?,?);");
+      $sql->bind_param("ii", $itemId, $category_id);
+      $sql->execute();
+      if($sql==false)
+      {
+        trigger_error($conn->error, E_USER_ERROR);
+      }
+
     }
   }
 }
