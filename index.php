@@ -10,6 +10,7 @@ error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier 
 // $clientID = "DanielSa-Example-SBX-4a6d0a603-2941e542";
 // $clientSecret = "SBX-a6d0a603000a-4767-4066-9526-d574";
 // $ruName = "Daniel_Savu-DanielSa-Exampl-gpsjh";
+
 // production
 $clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
 $clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
@@ -50,14 +51,11 @@ if ($err) {
   $creationTime = time();
   $mysqlCreationTime = date ("Y-m-d H:i:s", $creationTime);
   $expirationTime = $creationTime + (3600 * 2 - 10 * 60); // give it time before the actual expiry
-  $refresh_tokenExpirationTime = $creationTime + (547 * 24 * 60 * 60 - 10 * 60); // give it time before the actual expiry
   $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
+  $refresh_tokenExpirationTime = $creationTime + (547 * 24 * 60 * 60 - 10 * 60); // give it time before the actual expiry
   $refresh_mysqlExpirationTime = date ("Y-m-d H:i:s", $refresh_tokenExpirationTime);
   $auth_token = $response->access_token;
   $refresh_token = $response->refresh_token;
-
-  // print_r($response);
-  // echo $response;
   
   if (empty($auth_token)){ exit(); }
   else {
@@ -72,7 +70,6 @@ if ($err) {
 ?>
 
 
-
 <!-- Build the HTML page with values from the call response -->
 <html>
 <head>
@@ -80,9 +77,6 @@ if ($err) {
 <style type="text/css">body { font-family: arial,sans-serif;} </style>
 </head>
 <body>
-
-<!-- <h1>eBay Search Results for ye</h1> -->
-
 <table>
 <tr>
   <td>

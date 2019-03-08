@@ -37,6 +37,7 @@ if ($conn->query($token_sql) === FALSE) {
 }
 
 $get_token_url = 'https://auth.ebay.com/oauth2/authorize?client_id=DanielSa-Example-PRD-716e557a4-2c2a1194&response_type=code&redirect_uri=Daniel_Savu-DanielSa-Exampl-lwxtsaiw&scope=https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly';
+$scopes = 'https://api.ebay.com/oauth/api_scope https://api.ebay.com/oauth/api_scope/sell.marketing.readonly https://api.ebay.com/oauth/api_scope/sell.marketing https://api.ebay.com/oauth/api_scope/sell.inventory.readonly https://api.ebay.com/oauth/api_scope/sell.inventory https://api.ebay.com/oauth/api_scope/sell.account.readonly https://api.ebay.com/oauth/api_scope/sell.account https://api.ebay.com/oauth/api_scope/sell.fulfillment.readonly https://api.ebay.com/oauth/api_scope/sell.fulfillment https://api.ebay.com/oauth/api_scope/sell.analytics.readonly';
 $authenticate_message = '<p>Please visit <a href="'.$get_token_url.'">this link</a> in order to authenticate with eBay.</p>';
 
 if ($tokens_result->num_rows==0){
@@ -44,11 +45,41 @@ if ($tokens_result->num_rows==0){
 } else {
    $token_row = $tokens_result->fetch_assoc();
    if ( time() > strtotime($token_row['expirationTime']) ){
-     echo $authenticate_message;
-     $delete_sql = "DELETE from tokens;";
-     if ($conn->query($delete_sql) === FALSE) {exit();}
+
+      //need to use refresh_token to fetch new auth_token
+    $clientID = "DanielSa-Example-PRD-716e557a4-2c2a1194";
+    $clientSecret = "PRD-16e557a45ab8-2ab9-41bc-b143-02fb";
+    $url = "https://api.ebay.com/identity/v1/oauth2/token";
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_URL => $url,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 30,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "POST",
+      CURLOPT_POSTFIELDS => "grant_type=refresh_token&scope=" .  urlencode($scopes) . "&refresh_token=" . $token_row['refreshToken'],
+      CURLOPT_HTTPHEADER => array(
+        "Authorization: Basic " . base64_encode($clientID.':'.$clientSecret),
+        "Content-Type: application/x-www-form-urlencoded",
+      ),
+    ));
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+    curl_close($curl);
+    $response = json_decode($response);
+    $expirationTime = time() + (3600 * 2 - 10 * 60);
+    $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
+     $update_sql = "update tokens set 
+              auth_token = \"" . $response->access_token . "\",
+              expirationTime = \"" . $mysqlExpirationTime . "\"
+              where refreshToken= \"" . $token_row['refreshToken'] . "\" ;";
+     if ($conn->query($update_sql) === FALSE) {exit();}
+     echo "Successfully updated auth_token";
    } else { $auth_token = $token_row['auth_token']; }
 }
+
 
 curl_setopt_array($curl, array(
   CURLOPT_URL => $endpoint,
