@@ -56,8 +56,8 @@ if ($err) {
   $auth_token = $response->access_token;
   $refresh_token = $response->refresh_token;
 
-  print_r($response);
-  echo $response;
+  // print_r($response);
+  // echo $response;
   
   if (empty($auth_token)){ exit(); }
   else {
