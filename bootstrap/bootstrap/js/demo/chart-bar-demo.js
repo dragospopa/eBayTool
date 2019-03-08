@@ -43,7 +43,7 @@ function myAjax(userQuery){
       histLabels = [];
       histSize = [];
       var prev;
-      data.sort();
+      data.sort((a,b) => (a - b));
 
       for(var i = 0; i < data.length; i++){
         if(data[i] !== prev){
