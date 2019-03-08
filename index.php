@@ -52,7 +52,7 @@ if ($err) {
   $expirationTime = $creationTime + (3600 * 2 - 10 * 60); // give it time before the actual expiry
   $refresh_tokenExpirationTime = $creationTime + (547 * 24 * 60 * 60 - 10 * 60); // give it time before the actual expiry
   $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
-  
+  $refresh_mysqlExpirationTime = date ("Y-m-d H:i:s", $refresh_tokenExpirationTime);
   $auth_token = $response->access_token;
   $refresh_token = $response->refresh_token;
 
@@ -61,7 +61,7 @@ if ($err) {
   
   if (empty($auth_token)){ exit(); }
   else {
-  $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime, refreshToken, refreshTokenCreationTime, refreshTokenExpirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\", \"$refresh_token\",\"$expirationTime\", \"$refresh_tokenExpirationTime\");";
+  $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime, refreshToken, refreshTokenCreationTime, refreshTokenExpirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\", \"$refresh_token\",\"$mysqlExpirationTime\", \"$refresh_mysqlExpirationTime\");";
   if ($conn->query($sql) === TRUE) {
         echo "New record created successfully";
     } else {
