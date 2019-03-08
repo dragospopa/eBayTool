@@ -15,7 +15,7 @@ $endpoint = 'https://api.ebay.com/buy/browse/v1/item_summary/search?';  // URL t
 $endpointShopping = 'http://open.api.ebay.com/shopping';
 $filters =
   array(
-    'q' => 'Iphone X',
+    'q' => 'Ipad',
     'limit' => '100',
     'filter' => array('price:[150..2000],priceCurrency:USD', 'buyingOptions:{AUCTION}'),
   );
@@ -76,21 +76,26 @@ if ($err) {
         $sql = $conn->prepare ('UPDATE items set highestBid = ?, bidCount = ? where itemID = ?;');
         if($sql==false)
         {
-          trigger_error($conn->error, E_USER_ERROR);
+          trigger_error($sql->error, E_USER_ERROR);
         }
 
         $sql->bind_param('dii', $highestBid,$bidCount,$itemId);
         $status = $sql->execute();
-        if ($status == false){trigger_error($sql->Error,E_USER_ERROR);}
+        if ($status == false){trigger_error($status->error,E_USER_ERROR);}
+
         $sql='';
         $sql = "INSERT INTO timestamps (bidTime) values (NOW());";
-        if($conn->query($sql) == FALSE){ echo "Error: " . $sql . "<br>" . $conn->error; continue; }
+        if($conn->query($sql) == FALSE){ echo "Error: " . "<br>" . $sql->error; continue; }
+
         $timestamp_query = "SELECT max(timeID) FROM timestamps;";
-        if($conn->query($timestamp_query)==FALSE) { echo "Error: " . $sql . "<br>" . $conn->error; continue; };
+        if($conn->query($timestamp_query)==FALSE) { echo "Error: " . "<br>" . $sql->error; continue; };
+
+        print_r("Ajung aici");
         $timestamp_resp = $conn->query($timestamp_query);
         $timestamp_row = $timestamp_resp->fetch_assoc();
         $timestampID = $timestamp_row["max(timeID)"];
         print_r($itemId);
+        print_r("Ajung aici");
         print_r("     ");
 
         $sql='';
@@ -161,19 +166,15 @@ if ($err) {
     $auction_sql->execute();
     if($auction_sql==false)
     {
-      trigger_error($conn->error, E_USER_ERROR);
+      trigger_error($auction_sql->error, E_USER_ERROR);
     }
 
     $seller_sql = $conn->prepare("INSERT INTO sellers (username, feedbackPercentage) values (?, ?);");
-    if($seller_sql==false)
-    {
-      trigger_error($conn->error, E_USER_ERROR);
-    }
     $seller_sql->bind_param("ss", $sellerUsername, $sellerFeedbackPercentage);
     $seller_sql->execute();
     if($seller_sql==false)
     {
-      trigger_error($conn->error, E_USER_ERROR);
+      trigger_error($seller_sql->error, E_USER_ERROR);
     }
 
     // Populate the buyingOptions Table - Many to Many relation
@@ -210,19 +211,14 @@ if ($err) {
       $query_sql->execute();
       $query_resp = $query_sql->get_result();
 
-
       if($query_resp->num_rows == 0) {
         $sql = $conn->prepare("INSERT INTO categories (id) values (?);");
         $sql->bind_param("i",$categoryId);
         $sql->execute();
-        if ($sql === FALSE) { trigger_error($conn->error,E_USER_ERROR);}
+        if ($sql === FALSE) { trigger_error($sql->error,E_USER_ERROR);}
 
       }
       $sql =$conn->prepare("SELECT id from categories WHERE id = ?;");
-      if($sql==false)
-      {
-        trigger_error($conn->error, E_USER_ERROR);
-      }
       $sql->bind_param("i", $categoryId);
       $sql->execute();
       $result = $sql->get_result();
@@ -232,11 +228,6 @@ if ($err) {
       $sql = $conn->prepare("INSERT INTO product_category_junction (itemID, categoryID) values (?,?);");
       $sql->bind_param("ii", $itemId, $category_id);
       $sql->execute();
-      if($sql==false)
-      {
-        trigger_error($conn->error, E_USER_ERROR);
-      }
-
     }
   }
 }
