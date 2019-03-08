@@ -61,7 +61,7 @@ if ($err) {
   
   if (empty($auth_token)){ exit(); }
   else {
-  $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime, refreshToken, refreshTokenCreationTime, refreshTokenExpirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\", , \"$refresh_token\",\"$expirationTime\", \"$refresh_tokenExpirationTime\");";
+  $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime, refreshToken, refreshTokenCreationTime, refreshTokenExpirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\", \"$refresh_token\",\"$expirationTime\", \"$refresh_tokenExpirationTime\");";
   if ($conn->query($sql) === TRUE) {
         echo "New record created successfully";
     } else {
