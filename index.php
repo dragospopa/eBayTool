@@ -6,6 +6,7 @@ if ($conn->connect_error) {
 }
 ini_set('display_errors', 1);
 error_reporting(E_ALL);  // Turn on all errors, warnings and notices for easier debugging
+
 // sandbox
 // $clientID = "DanielSa-Example-SBX-4a6d0a603-2941e542";
 // $clientSecret = "SBX-a6d0a603000a-4767-4066-9526-d574";
@@ -46,8 +47,6 @@ if ($err) {
   echo "cURL Error #:" . $err;
 } else {
   $response = json_decode($response);
-  $sql = '';
-  
   $creationTime = time();
   $mysqlCreationTime = date ("Y-m-d H:i:s", $creationTime);
   $expirationTime = $creationTime + (3600 * 2 - 10 * 60); // give it time before the actual expiry
@@ -59,7 +58,7 @@ if ($err) {
   
   if (empty($auth_token)){ exit(); }
   else {
-  $sql .= "INSERT INTO tokens (auth_token, creationTime, expirationTime, refreshToken, refreshTokenCreationTime, refreshTokenExpirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\", \"$refresh_token\",\"$mysqlExpirationTime\", \"$refresh_mysqlExpirationTime\");";
+  $sql = "INSERT INTO tokens (auth_token, creationTime, expirationTime, refreshToken, refreshTokenCreationTime, refreshTokenExpirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\", \"$refresh_token\",\"$mysqlExpirationTime\", \"$refresh_mysqlExpirationTime\");";
   if ($conn->query($sql) === TRUE) {
         echo "New record created successfully";
     } else {

@@ -9,12 +9,14 @@ if ($conn->connect_error) {
 }
 
 $query =  $_POST['query'];
-$sql = "select * from items as i, sellers as s where i.itemName like '%$query%' and s.username = i.sellerUsername;";
+$sql_subq = "select * from items where itemName like '%$query%'";
+$sql = "SELECT * FROM sellers s 
+      INNER JOIN ($sql_subq) i 
+      ON s.username = i.sellerUsername";
 
 if ($conn->query($sql) === FALSE) {
   echo "Error: " . $sql . "<br>" . $conn->error;
 } else{
-
   $items_resp = $conn->query($sql);
   while($item_row = $items_resp->fetch_assoc()){
     // print_r($item_row);
