@@ -207,6 +207,9 @@ if ($err) {
     {
         trigger_error($conn->error, E_USER_ERROR);
     }
+    
+    $productName = preg_replace("/[^A-Za-z0-9 ]/", "", $productName);
+
     $auction_sql ->bind_param("isddsssdss", $itemId, $productName, $highestBid, $currency,$thumbnailPhotoURL, $sellerUsername, $itemCondition, $bidCount, $auctionEndTime, $listingStatus);
     $auction_sql->execute();
     if($auction_sql==false)
