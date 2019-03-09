@@ -205,7 +205,4 @@ function myAjax(itemID){
 
 
 getHistogram();
-
 console.log(myAreaChart);
-//myBarChart.data.datasets[0].backgroundColor[2] = "#1cc88a";
-myBarChart.update();
