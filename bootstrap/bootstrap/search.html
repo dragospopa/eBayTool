@@ -60,10 +60,7 @@ window.onload = function() {
   initialiseCountdowns();
   search_parameter = window.location.search;
   if(search_parameter) {
-    // search_parameter = decodeURIComponent(search_parameter);
     search_parameter = decodeURIComponent(search_parameter.substr(1).replace(/\+/g, '%20').split("=")[1]);
-    console.log(search_parameter);
-
     document.getElementById("search-txt").value = search_parameter;
   }
   search();
@@ -71,7 +68,6 @@ window.onload = function() {
   input.addEventListener("keyup", function(event) {
     // Cancel the default action, if needed
     event.preventDefault();
-    console.log("preventium leviosa");
     // Number 13 is the "Enter" key on the keyboard
     if (event.keyCode === 13) {
       // Trigger the button element with a click
@@ -91,8 +87,12 @@ function search(){
     suggestionBox.style.display = "none";
   }
   getSearchQuery();
-  myAjax();
-  
+  var form_input = document.getElementById("search-txt").value;
+  var form_validation_regex = /^[a-z0-9]+$/i; // only allow alphanumeric characters and don't allow the empty string
+  console.log(form_validation_regex.test(form_input));
+  if(form_validation_regex.test(form_input)) {
+    myAjax();
+  }
 }
 
 function getSearchQuery(){
