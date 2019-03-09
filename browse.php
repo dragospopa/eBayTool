@@ -163,7 +163,7 @@ if ($err) {
     if(!isset($item->seller->username)) continue;
     $thumbnailPhotoURL = $item->thumbnailImages[0]->imageUrl;
     $sellerUsername = $item->seller->username;
-    $sellerFeedbackPercentage = $item->seller->feedbackScore;
+    $sellerFeedbackPercentage = $item->seller->feedbackPercentage;
     $itemCondition = $item->condition;
     if (count($item->buyingOptions)>1) {
       $buyingOptions = 3;
