@@ -10,8 +10,8 @@ if ($conn->connect_error) {
 
 $query =  $_POST['query'];
 $sql_subq = "select * from items where itemName like '%$query%'";
-$sql = "SELECT * FROM sellers s 
-      INNER JOIN ($sql_subq) i 
+$sql = "SELECT * FROM sellers s
+      INNER JOIN ($sql_subq) i
       ON s.username = i.sellerUsername";
 
 if ($conn->query($sql) === FALSE) {
@@ -34,7 +34,7 @@ if ($conn->query($sql) === FALSE) {
     $sellerFeedbackPercentage = number_format($sellerFeedbackPercentage, 1, '.', '');
 
     $url = 'item.php?itemName='.$itemName.'&highestBid='.$highestBid.'&bidCount='.$bidCount.'&thumbnailPhotoURL='.$thumbnailPhotoURL.'&sellerUsername='.$sellerUsername.'&currency='.$currency.'&itemCondition='.$itemCondition.'&auctionEndTime='.$auctionEndTime.'&sellerFeedbackPercentage='.$sellerFeedbackPercentage.'&itemID='.$itemID.'&query='.$query;;
-    
+
     $results = '
             <div class="col-xl-12 col-12">
               <div class="card shadow mb-2">

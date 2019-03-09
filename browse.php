@@ -61,7 +61,7 @@ if ($tokens_result->num_rows==0){
     $response = json_decode($response);
     $expirationTime = time() + (3600 * 2 - 10 * 60);
     $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
-     $update_sql = "update tokens set 
+     $update_sql = "update tokens set
               auth_token = \"" . $response->access_token . "\",
               expirationTime = \"" . $mysqlExpirationTime . "\"
               where refreshToken= \"" . $token_row['refreshToken'] . "\" ;";

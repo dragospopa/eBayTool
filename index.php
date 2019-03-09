@@ -55,7 +55,7 @@ if ($err) {
   $refresh_mysqlExpirationTime = date ("Y-m-d H:i:s", $refresh_tokenExpirationTime);
   $auth_token = $response->access_token;
   $refresh_token = $response->refresh_token;
-  
+
   if (empty($auth_token)){ exit(); }
   else {
   $sql = "INSERT INTO tokens (auth_token, creationTime, expirationTime, refreshToken, refreshTokenCreationTime, refreshTokenExpirationTime) values (\"$auth_token\", \"$mysqlCreationTime\", \"$mysqlExpirationTime\", \"$refresh_token\",\"$mysqlExpirationTime\", \"$refresh_mysqlExpirationTime\");";
