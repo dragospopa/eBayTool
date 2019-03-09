@@ -27,92 +27,185 @@ function number_format(number, decimals, dec_point, thousands_sep) {
   return s.join(dec);
 }
 
-// Area Chart Example
-var ctx = document.getElementById("myAreaChart");
-var myLineChart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    datasets: [{
-      label: "Earnings",
-      lineTension: 0.3,
-      backgroundColor: "rgba(78, 115, 223, 0.05)",
-      borderColor: "rgba(78, 115, 223, 1)",
-      pointRadius: 3,
-      pointBackgroundColor: "rgba(78, 115, 223, 1)",
-      pointBorderColor: "rgba(78, 115, 223, 1)",
-      pointHoverRadius: 3,
-      pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-      pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-      pointHitRadius: 10,
-      pointBorderWidth: 2,
-      data: [0, 10000, 5000, 15000, 10000, 20000, 15000, 25000, 20000, 30000, 25000, 40000],
-    }],
-  },
-  options: {
-    maintainAspectRatio: false,
-    layout: {
-      padding: {
-        left: 10,
-        right: 25,
-        top: 25,
-        bottom: 0
+function getHistogram(){
+  var query = window.location.href;
+  querry_split = query.split("itemID=");
+  querry_array = querry_split[1].split("&");
+  itemID = querry_array[0];
+  query = decodeURIComponent(itemID);
+  console.log(itemID);
+  myAjax(itemID);
+}
+
+var labels = [];
+var bids = [];
+var min_bid = 0;
+
+function myAjax(itemID){
+  $.ajax({
+    type: "POST",
+    url: './js/demo/updateAreaChart.php',
+    data: {'action': "update", 'itemID': itemID },
+    success: function(data){
+      data = decodeURIComponent(data);
+      dictionary_data = [];
+      data = data.split("&");
+
+      console.log(data);
+      for(var i = 0; i < data.length; i ++){
+        entry = data[i].split("=");
+        dictionary_data[entry[0]] = entry[1];
       }
-    },
-    scales: {
-      xAxes: [{
-        time: {
-          unit: 'date'
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false
-        },
-        ticks: {
-          maxTicksLimit: 7
+      
+      console.log(dictionary_data);
+      for (var k in dictionary_data){
+        bid = parseInt(dictionary_data[k].substring(0,dictionary_data[k].length - 4));
+        k = k.replace("+"," ");
+        labels.push(k);
+        bids.push(bid); 
+      }
+      
+      min_bid = Math.min.apply(null, bids)-100;
+      console.log(min_bid);
+      console.log(bids);
+      // the raw numbers from the database - we need to transform this array 
+      var binWidth = 1 + 3.322 * Math.log(data.length) // uses Sturge's Rule
+      binWidth = Math.round(binWidth);
+      binWidth = Math.round((Math.max.apply(null, data) - Math.min.apply(null, data)) / binWidth);
+      var roundedData = [];
+      for(var i =0; i < data.length; i++){
+        var x = Math.round(data[i] / binWidth ) * binWidth;
+        roundedData.push(x);
+      }
+
+      data = roundedData;
+      var currentHighestBid = document.getElementById("highestBid").innerHTML;
+      currentHighestBid = Math.round(currentHighestBid / binWidth) * binWidth;
+      histLabels = [];
+      histSize = [];
+      var prev;
+      data.sort((a,b) => (a - b));
+
+      for(var i = 0; i < data.length; i++){
+        if(data[i] !== prev){
+          histLabels.push(data[i]);
+          histSize.push(1);
+        }else{
+          histSize[histSize.length - 1]++;
         }
-      }],
-      yAxes: [{
-        ticks: {
-          maxTicksLimit: 5,
-          padding: 10,
-          // Include a dollar sign in the ticks
-          callback: function(value, index, values) {
-            return '$' + number_format(value);
+        prev = data[i];
+      }
+
+      var backColor = [];
+      var length = histSize.length;
+      for(var i = 0; i < length; i ++){
+       if(histLabels[i] == currentHighestBid){
+          backColor.push("#00FF91");
+        }else{
+          backColor.push("#4e73df");
+        }
+      }
+
+
+    // Area Chart Example
+    var ctx = document.getElementById("myAreaChart");
+    var myLineChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Highest bid was",
+          lineTension: 0.3,
+          backgroundColor: "rgba(78, 115, 223, 0.05)",
+          borderColor: "rgba(78, 115, 223, 1)",
+          pointRadius: 3,
+          pointBackgroundColor: "rgba(78, 115, 223, 1)",
+          pointBorderColor: "rgba(78, 115, 223, 1)",
+          pointHoverRadius: 3,
+          pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+          pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+          pointHitRadius: 10,
+          pointBorderWidth: 2,
+          data: bids,
+        }],
+      },
+      options: {
+        maintainAspectRatio: false,
+        layout: {
+          padding: {
+            left: 10,
+            right: 25,
+            top: 25,
+            bottom: 0
           }
         },
-        gridLines: {
-          color: "rgb(234, 236, 244)",
-          zeroLineColor: "rgb(234, 236, 244)",
-          drawBorder: false,
-          borderDash: [2],
-          zeroLineBorderDash: [2]
-        }
-      }],
-    },
-    legend: {
-      display: false
-    },
-    tooltips: {
-      backgroundColor: "rgb(255,255,255)",
-      bodyFontColor: "#858796",
-      titleMarginBottom: 10,
-      titleFontColor: '#6e707e',
-      titleFontSize: 14,
-      borderColor: '#dddfeb',
-      borderWidth: 1,
-      xPadding: 15,
-      yPadding: 15,
-      displayColors: false,
-      intersect: false,
-      mode: 'index',
-      caretPadding: 10,
-      callbacks: {
-        label: function(tooltipItem, chart) {
-          var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+        scales: {
+          xAxes: [{
+            time: {
+              unit: 'date'
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false
+            },
+            ticks: {
+              maxTicksLimit: 7
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              maxTicksLimit: 5,
+              min: min_bid,
+              padding: 10,
+              // Include a dollar sign in the ticks
+              callback: function(value, index, values) {
+                return '$' + number_format(value);
+              }
+            },
+            gridLines: {
+              color: "rgb(234, 236, 244)",
+              zeroLineColor: "rgb(234, 236, 244)",
+              drawBorder: false,
+              borderDash: [2],
+              zeroLineBorderDash: [2]
+            }
+          }],
+        },
+        legend: {
+          display: false
+        },
+        tooltips: {
+          backgroundColor: "rgb(255,255,255)",
+          bodyFontColor: "#858796",
+          titleMarginBottom: 10,
+          titleFontColor: '#6e707e',
+          titleFontSize: 14,
+          borderColor: '#dddfeb',
+          borderWidth: 1,
+          xPadding: 15,
+          yPadding: 15,
+          displayColors: false,
+          intersect: false,
+          mode: 'index',
+          caretPadding: 10,
+          callbacks: {
+            label: function(tooltipItem, chart) {
+              var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+              return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+            }
+          }
         }
       }
-    }
-  }
-});
+    });
+
+}
+})
+}
+
+
+
+getHistogram();
+
+console.log(myAreaChart);
+//myBarChart.data.datasets[0].backgroundColor[2] = "#1cc88a";
+myBarChart.update();
