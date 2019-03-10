@@ -5,7 +5,7 @@
 	$dbName     = 'ebayer';
 	$db = new mysqli($dbHost, $dbUsername, $dbPassword, $dbName);
 	$searchTerm = $_GET['term'];
-	$query = $db->prepare("SELECT itemName FROM items WHERE itemName LIKE ? ");
+	$query = $db->prepare("SELECT itemName FROM items WHERE itemName LIKE ? LIMIT 10");
 	$value = "%$searchTerm%";
 	$query->bind_param("s", $value);
 	$query->execute() or trigger_error($query->error, E_USER_ERROR);

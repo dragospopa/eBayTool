@@ -35,7 +35,7 @@
             </nav>
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-lg-12 col-12" style="z-index: 1000;!important">
+                    <div class="col-lg-12 col-12">
                         <div class="item-card shadow mb-1">
                             <div class="card-body row" style="height: 100px; !important">
                                 <div class="item-chart-pie col-5"> <img class="item-img" src="'.$thumbnailPhotoURL.'" /> </div>
