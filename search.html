@@ -88,7 +88,7 @@ function search(){
   }
   getSearchQuery();
   var form_input = document.getElementById("search-txt").value;
-  var form_validation_regex = /^[a-z0-9]+$/i; // only allow alphanumeric characters and don't allow the empty string
+  var form_validation_regex = /^[A-Za-z0-9 ]+$/i; // only allow alphanumeric characters and don't allow the empty string
   console.log(form_validation_regex.test(form_input));
   if(form_validation_regex.test(form_input)) {
     myAjax();

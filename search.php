@@ -9,6 +9,10 @@ if ($conn->connect_error) {
 }
 
 $query =  $_POST['query'];
+$form_validation_regex = "/^[A-Za-z0-9 ]+$/i";
+if(!preg_match($form_validation_regex, $query)) {
+  exit();
+}
 $sql_subq = "select * from items where itemName like '%$query%'";
 $sql = "SELECT * FROM sellers s 
       INNER JOIN ($sql_subq) i 
