@@ -7383,6 +7383,9 @@ button.bg-dark:focus {
   flex-direction: row !important;
 }
 
+.char-area{
+  display: none !important;
+}
 .flex-column {
   -webkit-box-orient: vertical !important;
   -webkit-box-direction: normal !important;
@@ -10572,7 +10575,6 @@ a:focus {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  height:800px;
 }
 
 #wrapper #content-wrapper {

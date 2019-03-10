@@ -14,60 +14,113 @@
 
   $currencyCodeToSymbol = array("USD" => "$", "GBP" => "£");
 
-  $html = '<div id="wrapper"> <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar"> <img src="img/sidebar.png"/> </ul> <div id="content-wrapper" class="d-flex flex-column"> <div id="content"> <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"> <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"> <i class="fa fa-bars"></i> </button> <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html"> <div class="sidebar-brand-icon"> <i class="fas fa-tags"></i> </div><div class="sidebar-brand-text mx-3">eBay Auctioneer</div></a> <form action="search.html" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"> <div class="input-group"> <input id="search-txt" name="search" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2"> <div class="input-group-append"> <button class="btn btn-primary" type="button"> <i class="fas fa-search fa-sm"></i> </button> </div></div></form> </nav> <div class="container-fluid"> <div class="row"> <div class="col-xl-12 col-12" style="z-index: 1000;!important"> <div class="item-card shadow mb-2"> <div class="card-body row" style="height: 1000px;"> <div class="item-chart-pie col-5"> <img class="item-img" src="'.$thumbnailPhotoURL.'"/> </div><div class="col"> <div class="card-body"> <h5 class="listing-title font-weight-bold text-dark text-uppercase mb-0">'.$itemName.'</h5> <div class="listing-seller mb-3">sold by '.$sellerUsername.'<span class="listing-seller-score">| '.$sellerFeedbackPercentage.'% Positive feedback </span></div><div class="text-dark"> <span class="listing-price-bid-description">Highest Bid:</span> <span class="listing-price-bid listing-price-bid-currency">'.$currencyCodeToSymbol[$currency].'</span><!-- commented to remove whitespace on page --><span id="highestBid", class="listing-price-bid listing-price-bid-whole">'.$highestBid.'</span><!-- commented to remove whitespace on page --><span class="listing-price-bid listing-price-bid-currency"></span> </div><div class="text-dark"> <span><span class="listing-extra-values">'.$bidCount.'</span> bids were placed!</span><br></div><div class="listing-price-fixed"> <span class="listing-price-fixed-description">Buy it now: </span> <span class="listing-price-fixed-currency">'.$currencyCodeToSymbol[$currency].'</span><!-- commented to remove whitespace on page --><span class="listing-price-fixed-whole">1000</span><!-- commented to remove whitespace on page --><span class="listing-price-fixed-currency">00</span> </div><br/> <div class="text-dark listing-text"> <span>Condition: <span class="listing-extra-values">'.$itemCondition.'</span></span><br><span>Auction ends in: <span class="listing-extra-values" id=\'countdown\'></span></span> </div><!--<br/> <button id="histButton", class="d-none d-sm-inline-block btn btn-primary shadow-sm col-g-2", onclick="getHistogram()">Update Histogram</button> -->
+  $html = '<div id="wrapper">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar"> <img src="img/sidebar.png" /> </ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"> <i class="fa fa-bars"></i> </button>
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                    <div class="sidebar-brand-icon"> <i class="fas fa-tags"></i> </div>
+                    <div class="sidebar-brand-text mx-3">eBay Auctioneer</div>
+                </a>
+                <form action="search.html" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <div class="input-group">
+                        <input id="search-txt" name="search" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="button"> <i class="fas fa-search fa-sm"></i> </button>
+                        </div>
+                    </div>
+                </form>
+            </nav>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12 col-12" style="z-index: 1000;!important">
+                        <div class="item-card shadow mb-1">
+                            <div class="card-body row" style="height: 100px; !important">
+                                <div class="item-chart-pie col-5"> <img class="item-img" src="'.$thumbnailPhotoURL.'" /> </div>
+                                <div class="col">
+                                    <div class="card-body">
+                                        <h5 class="listing-title font-weight-bold text-dark text-uppercase mb-0">'.$itemName.'</h5>
+                                        <div class="listing-seller mb-3">sold by '.$sellerUsername.'<span class="listing-seller-score">| '.$sellerFeedbackPercentage.'% Positive feedback </span></div>
+                                        <div class="text-dark"> <span class="listing-price-bid-description">Highest Bid:</span> <span class="listing-price-bid listing-price-bid-currency">'.$currencyCodeToSymbol[$currency].'</span>
+                                            <!-- commented to remove whitespace on page --><span id="highestBid" , class="listing-price-bid listing-price-bid-whole">'.$highestBid.'</span>
+                                            <!-- commented to remove whitespace on page --><span class="listing-price-bid listing-price-bid-currency"></span> </div>
+                                        <div class="text-dark"> <span><span class="listing-extra-values">'.$bidCount.'</span> bids were placed!</span>
+                                            <br>
+                                        </div>
+                                        <div class="listing-price-fixed"> <span class="listing-price-fixed-description">Buy it now: </span> <span class="listing-price-fixed-currency">'.$currencyCodeToSymbol[$currency].'</span>
+                                            <!-- commented to remove whitespace on page --><span class="listing-price-fixed-whole">1000</span>
+                                            <!-- commented to remove whitespace on page --><span class="listing-price-fixed-currency">00</span> </div>
+                                        <br/>
+                                        <div class="text-dark listing-text"> <span>Condition: <span class="listing-extra-values">'.$itemCondition.'</span></span>
+                                            <br><span>Auction ends in: <span class="listing-extra-values" id=\'countdown\'></span></span>
+                                        </div>
+                                        <!--<br/> <button id="histButton", class="d-none d-sm-inline-block btn btn-primary shadow-sm col-g-2", onclick="getHistogram()">Update Histogram</button> -->
 
-<br>
- <br/> <br/> <br/> <br/> <span class="text-dark listing-text">Recommended bid:</span> <span class="item-price-bid item-price-bid-currency">'.$currencyCodeToSymbol[$currency].'</span><!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-whole">900</span><!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-currency">00</span> <br/> <div class="input-group"> <div class="input-icon"> <a href="https://www.ebay.co.uk/itm/'.$itemID.'" class="d-none d-sm-inline-block btn btn-primary shadow-sm col-g-2"><i class="fas fa-gavel"> </i>&nbsp Go Bid!</a> </div></div></div></div></div></div></div>
+                                        <br>
+                                        <br/>
+                                        <br/>
+                                        <br/>
+                                        <br/> <span class="text-dark listing-text">Recommended bid:</span> <span class="item-price-bid item-price-bid-currency">'.$currencyCodeToSymbol[$currency].'</span>
+                                        <!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-whole">900</span>
+                                        <!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-currency">00</span>
+                                        <br/>
+                                        <div class="input-group">
+                                            <div class="input-icon"> <a href="https://www.ebay.co.uk/itm/'.$itemID.'" class="d-none d-sm-inline-block btn btn-primary shadow-sm col-g-2"><i class="fas fa-gavel"> </i>&nbsp Go Bid!</a> </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-
-  </div></div></div>
-<!-- Content Row -->
-<div class="container-fluid">
-          <div class="row" style="margin-top: 400px;">
-
-            <div class="col-xl-6 col-lg-6">
-
-              <!-- Area Chart -->
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Time evolution</h6>
                 </div>
-                <div class="card-body">
-                  <div class="chart-area">
-                    <canvas id="myAreaChart"></canvas>
-                  </div>
-                  <hr>
-                  Evolution of the <code>highest bid</code> of this auction over time.
-                </div>
-              </div>
-
-
             </div>
+        </div>
+        <!-- Content Row -->
+        <div class="container-fluid">
+            <div class="row" style="margin-top: 400px;">
 
-            <!-- Bar Chart -->
-            <div class="col-xl-6 col-lg-6">
-              <div class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">How does this auction compare with others?</h6>
+                <div class="col-xl-6 col-lg-6">
+
+                    <!-- Area Chart -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Time evolution</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="myAreaChart" style="width: 1000px!important;"></canvas>
+                            </div>
+                            <hr> Evolution of the <code>highest bid</code> of this auction over time.
+                        </div>
+                    </div>
+
                 </div>
-                <!-- Card Body -->
-                <div class="card-body">
-                  <div class="chart-bar pt-4">
-                    <canvas id="myBarChart"></canvas>
-                  </div>
-                  <hr>
-                  Comparison between the <code>highest bid</code> on the current auction and the other auctions returned by the previous search.
+
+                <!-- Bar Chart -->
+                <div class="col-xl-6 col-lg-6">
+                    <div class="card shadow mb-4">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">How does this auction compare with others?</h6>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <div class="chart-bar pt-4">
+                                <canvas id="myBarChart"></canvas>
+                            </div>
+                            <hr> Comparison between the <code>highest bid</code> on the current auction and the other auctions returned by the previous search.
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-</div>
-  <script>
-// Set the date were counting down to
-var countDownDate = new Date("'.$auctionEndTime.'").getTime();
-  </script>
-
+        </div>
+        <script>
+            // Set the date were counting down to
+            var countDownDate = new Date("'.$auctionEndTime.'").getTime();
+        </script>
   ';
 
     echo $html;
