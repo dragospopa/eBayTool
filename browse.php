@@ -90,6 +90,12 @@ if ($err) {
   print_r($err);
   echo "cURL Error #:" . $err;
 } else {
+
+  //clean the DB by removing items which have auctionEndTime already expired
+  $clean_db = $conn->prepare("DELETE from items where auctionEndTime < NOW();");
+  $clean_db ->execute() or trigger_error($clean_db->error, E_USER_ERROR);
+
+
   $resp = json_decode($resp);
   foreach($resp->itemSummaries as $item) {
     $itemId = substr($item->itemId, 3, -2);
@@ -123,7 +129,7 @@ if ($err) {
         $sql = $conn->prepare("INSERT INTO product_timestamp_junction (timestampID, itemID, highestBid, bidCount) values(?,?,?,?);");
         if($sql==false)
         {
-          trigger_error($conn->error, E_USER_ERROR);
+          trigger_error($sql->error, E_USER_ERROR);
         }
         $sql->bind_param("iidi", $timestampID,$itemId,$highestBid,$bidCount);
         $sql->execute();
