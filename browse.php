@@ -61,7 +61,7 @@ if ($tokens_result->num_rows==0){
     $response = json_decode($response);
     $expirationTime = time() + (3600 * 2 - 10 * 60);
     $mysqlExpirationTime = date ("Y-m-d H:i:s", $expirationTime);
-     $update_sql = "update tokens set 
+     $update_sql = "update tokens set
               auth_token = \"" . $response->access_token . "\",
               expirationTime = \"" . $mysqlExpirationTime . "\"
               where refreshToken= \"" . $token_row['refreshToken'] . "\" ;";
@@ -69,9 +69,6 @@ if ($tokens_result->num_rows==0){
      echo "Successfully updated auth_token";
    } else { $auth_token = $token_row['auth_token']; }
 }
-
-
-
 curl_setopt_array($curl, array(
   CURLOPT_URL => $endpoint,
   CURLOPT_ENCODING => "",
@@ -93,6 +90,12 @@ if ($err) {
   print_r($err);
   echo "cURL Error #:" . $err;
 } else {
+
+  //clean the DB by removing items which have auctionEndTime already expired
+  $clean_db = $conn->prepare("DELETE from items where auctionEndTime < NOW();");
+  $clean_db ->execute() or trigger_error($clean_db->error, E_USER_ERROR);
+
+
   $resp = json_decode($resp);
   foreach($resp->itemSummaries as $item) {
     $itemId = substr($item->itemId, 3, -2);
@@ -109,29 +112,24 @@ if ($err) {
         {
           trigger_error($sql->error, E_USER_ERROR);
         }
-
         $sql->bind_param('dii', $highestBid, $bidCount, $itemId);
         $status = $sql->execute();
         if ($status == false){trigger_error($status->error,E_USER_ERROR);}
-
         $sql='';
         $sql = "INSERT INTO timestamps (bidTime) values (NOW());";
         print_r($sql);
         if($conn->query($sql) == FALSE){ echo "Error: " . "<br>" . $sql->error; continue; }
-
         $timestamp_query = "SELECT max(timeID) FROM timestamps;";
         if($conn->query($timestamp_query)==FALSE) { echo "Error: " . "<br>" . $sql->error; continue; };
-
         $timestamp_resp = $conn->query($timestamp_query);
         $timestamp_row = $timestamp_resp->fetch_assoc();
         $timestampID = $timestamp_row["max(timeID)"];
         print_r($itemId);
-
         $sql='';
         $sql = $conn->prepare("INSERT INTO product_timestamp_junction (timestampID, itemID, highestBid, bidCount) values(?,?,?,?);");
         if($sql==false)
         {
-          trigger_error($conn->error, E_USER_ERROR);
+          trigger_error($sql->error, E_USER_ERROR);
         }
         $sql->bind_param("iidi", $timestampID,$itemId,$highestBid,$bidCount);
         $sql->execute();
@@ -144,14 +142,11 @@ if ($err) {
       // branch for item non-existent in table *yet*
       $sql = "INSERT INTO timestamps (bidTime) values (NOW());";
       if($conn->query($sql) == FALSE){ echo "Error: " . "<br>" . $sql->error; continue; }
-
       $timestamp_query = "SELECT max(timeID) FROM timestamps;";
       if($conn->query($timestamp_query)==FALSE) { echo "Error: " . "<br>" . $sql->error; continue; };
-
       $timestamp_resp = $conn->query($timestamp_query);
       $timestamp_row = $timestamp_resp->fetch_assoc();
       $timestampID = $timestamp_row["max(timeID)"];
-
       $sql = $conn->prepare("INSERT INTO product_timestamp_junction (timestampID, itemID, highestBid, bidCount) values(?,?,?,?);");
       $sql->bind_param("iidi", $timestampID, $itemId, $highestBid, $bidCount);
       $sql->execute();
@@ -163,7 +158,7 @@ if ($err) {
     if(!isset($item->seller->username)) continue;
     $thumbnailPhotoURL = $item->thumbnailImages[0]->imageUrl;
     $sellerUsername = $item->seller->username;
-    $sellerFeedbackPercentage = $item->seller->feedbackScore;
+    $sellerFeedbackPercentage = $item->seller->feedbackPercentage;
     $itemCondition = $item->condition;
     if (count($item->buyingOptions)>1) {
       $buyingOptions = 3;
@@ -207,16 +202,14 @@ if ($err) {
     {
         trigger_error($conn->error, E_USER_ERROR);
     }
-    
-    $productName = preg_replace("/[^A-Za-z0-9 ]/", "", $productName);
 
+    $productName = preg_replace("/[^A-Za-z0-9 ]/", "", $productName);
     $auction_sql ->bind_param("isddsssdss", $itemId, $productName, $highestBid, $currency,$thumbnailPhotoURL, $sellerUsername, $itemCondition, $bidCount, $auctionEndTime, $listingStatus);
     $auction_sql->execute();
     if($auction_sql==false)
     {
       trigger_error($auction_sql->error, E_USER_ERROR);
     }
-
     $seller_sql = $conn->prepare("INSERT INTO sellers (username, feedbackPercentage) values (?, ?);");
     $seller_sql->bind_param("ss", $sellerUsername, $sellerFeedbackPercentage);
     $seller_sql->execute();
@@ -224,7 +217,6 @@ if ($err) {
     {
       trigger_error($seller_sql->error, E_USER_ERROR);
     }
-
     // Populate the buyingOptions Table - Many to Many relation
     foreach($item->buyingOptions as $buyingOption) {
       $query_sql = $conn->prepare("SELECT * from buyingOptions where buyingOption = ?;");
@@ -239,15 +231,11 @@ if ($err) {
       $sql = $conn->prepare("SELECT id from buyingOptions WHERE buyingOption = ?;");
       $sql->bind_param("i", $buyingOption);
       $sql->execute() or trigger_error($sql->error, E_USER_ERROR);
-
       $buyingOption_resp = $sql->get_result();
       $buyingOption_row = $buyingOption_resp->fetch_assoc();
       $buyingOption_id = $buyingOption_row['id'];
-
       $sql = "INSERT INTO product_buyingoptions_junction (itemID, buyingOptionID) values ('$itemId','$buyingOption_id');";
       if ($conn->query($sql) === FALSE) { }
-
-
     }
     // Populate the categories Table - Many to Many relation
     foreach($item->categories as $category) {
@@ -256,19 +244,16 @@ if ($err) {
       $query_sql->bind_param("i", $categoryId);
       $query_sql->execute();
       $query_resp = $query_sql->get_result();
-
       if($query_resp->num_rows == 0) {
         $sql = $conn->prepare("INSERT INTO categories (id) values (?);");
         $sql->bind_param("i",$categoryId);
         $sql->execute();
         if ($sql === FALSE) { trigger_error($sql->error,E_USER_ERROR);}
-
       }
       $sql =$conn->prepare("SELECT id from categories WHERE id = ?;");
       $sql->bind_param("i", $categoryId);
       $sql->execute();
       $result = $sql->get_result();
-
       $category_row = $result->fetch_assoc();
       $category_id = $category_row['id'];
       $sql = $conn->prepare("INSERT INTO product_category_junction (itemID, categoryID) values (?,?);");
