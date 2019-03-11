@@ -28,11 +28,11 @@
                     <div class="sidebar-brand-icon"> <i class="fas fa-tags"></i> </div>
                     <div class="sidebar-brand-text mx-3">eBay Auctioneer</div>
                 </a>
-                <form action="search.html" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <form action="search.html"  onclick="if(event.target.id === \'search-btn\') this.submit()" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
                         <input id="search-txt" name="search" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="button"> <i class="fas fa-search fa-sm"></i> </button>
+                            <button id="search-btn" class="btn btn-primary" type="button"> <i class="fas fa-search fa-sm"></i> </button>
                         </div>
                     </div>
                 </form>
@@ -81,10 +81,9 @@
 
                 </div>
             </div>
-        </div>
-        <!-- Content Row -->
+            <!-- Content Row -->
         <div class="container-fluid">
-            <div class="row" style="margin-top: 400px;">
+            <div class="row" style="margin-top: 280px;">
 
                 <div class="col-xl-6 col-lg-6">
 
@@ -121,6 +120,8 @@
                 </div>
             </div>
         </div>
+        </div>
+        
         <script>
             // Set the date were counting down to
             var countDownDate = new Date("'.$auctionEndTime.'").getTime();
@@ -142,7 +143,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>SB Admin 2 - Dashboard</title>
+  <title>eBay Auctioneer</title>
 
   <!-- Custom fonts for this template-->
   <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">

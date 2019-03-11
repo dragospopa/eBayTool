@@ -11168,11 +11168,11 @@ a:focus {
   background-clip: border-box;
   border: 1px solid #e3e6f0;
   border-radius: 0.35rem;
-  height: 620px;
+  height: 510px;
 }
 
 .item-right-card {
-  padding-left: 5rem;
+  padding-left: 8rem;
 }
 
 .item-price-bid{
@@ -11718,7 +11718,6 @@ a:focus {
 .chart-area {
   position: relative;
   height: 10rem;
-  width: 50%;
 }
 
 @media (min-width: 768px) {
