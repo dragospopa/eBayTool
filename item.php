@@ -84,7 +84,7 @@
         </div>
         <!-- Content Row -->
         <div class="container-fluid">
-            <div class="row" style="margin-top: 400px;">
+            <div class="row" style="margin-top: 280px;">
 
                 <div class="col-xl-6 col-lg-6">
 
