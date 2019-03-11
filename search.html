@@ -89,7 +89,6 @@ function search(){
   getSearchQuery();
   var form_input = document.getElementById("search-txt").value;
   var form_validation_regex = /^[A-Za-z0-9 ]+$/i; // only allow alphanumeric characters and don't allow the empty string
-  console.log(form_validation_regex.test(form_input));
   if(form_validation_regex.test(form_input)) {
     myAjax();
   }
@@ -110,7 +109,6 @@ function myAjax() {
              document.getElementById("search-results").innerHTML = html;
            }
       });
-      console.log(document.querySelector('.freeShippingOnly:checked').value);
  }
 
  $(function()
@@ -154,12 +152,13 @@ function myAjax() {
               </div>
               <div class="sidebar-brand-text mx-3">eBay Auctioneer</div>
             </a>
-          <form onkeypress='if(event.keyCode == 13) search()' onSubmit="return false;" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+           <!--  || event.type == "click" -->
+          <form onkeypress='if(event.keyCode == 13) search()' onclick="if(event.target.id === 'search-btn') search()" onSubmit="return false;" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
 
             <div class="input-group">
               <input id="search-txt" type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" >
               <div class="input-group-append">
-                <button id="search-btn" class="btn btn-primary" type="button"  onclick="search()" >
+                <button id="search-btn" class="btn btn-primary" type="button">
                   <i class="fas fa-search fa-sm"></i>
                 </button>
               </div>
