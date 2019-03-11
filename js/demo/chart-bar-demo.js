@@ -29,22 +29,27 @@ function myAjax(userQuery){
 
       data = roundedData;
       var currentHighestBid = document.getElementById("highestBid").innerHTML;
+      if (!binWidth) binWidth = 1;
       currentHighestBid = Math.round(currentHighestBid / binWidth) * binWidth;
+
       histLabels = [];
       histSize = [];
       var prev;
       data.sort((a,b) => (a - b));
-
-      for(var i = 0; i < data.length; i++){
-        if(data[i] !== prev){
-          histLabels.push(data[i]);
-          histSize.push(1);
-        }else{
-          histSize[histSize.length - 1]++;
+      if (data.length == 1){
+        histLabels.push(currentHighestBid);
+        histSize.push(1);
+      } else {
+        for(var i = 0; i < data.length; i++){
+          if(data[i] !== prev){
+            histLabels.push(data[i]);
+            histSize.push(1);
+          }else{
+            histSize[histSize.length - 1]++;
+          }
+          prev = data[i];
         }
-        prev = data[i];
       }
-
       var backColor = [];
       var length = histSize.length;
       for(var i = 0; i < length; i ++){
