@@ -11171,6 +11171,10 @@ a:focus {
   height: 620px;
 }
 
+.item-right-card {
+  padding-left: 5rem;
+}
+
 .item-price-bid{
   color: #1cc88a;
 }

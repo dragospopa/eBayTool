@@ -10,7 +10,11 @@
   $auctionEndTime = $_GET['auctionEndTime'];
   $sellerFeedbackPercentage = $_GET['sellerFeedbackPercentage'];
 
-
+  // recommended bid is 1% over the current highest bid. This is in line with
+  // ebay's automatic bidding system guidelines
+  // https://www.ebay.co.uk/gds/EBAY-AUTOMATIC-BIDDING-SYSTEM-/10000000006909959/g.html
+  $recBidWhole = (string)((int)($highestBid + (int)($highestBid/100)));
+  $recBidDecimal = (string)((int)(($highestBid + ($highestBid/100) - $reccBidWhole) * 100));
 
   $currencyCodeToSymbol = array("USD" => "$", "GBP" => "£");
 
@@ -40,7 +44,7 @@
                             <div class="card-body row" style="height: 100px; !important">
                                 <div class="item-chart-pie col-5"> <img class="item-img" src="'.$thumbnailPhotoURL.'" /> </div>
                                 <div class="col">
-                                    <div class="card-body">
+                                    <div class="card-body item-right-card">
                                         <h5 class="listing-title font-weight-bold text-dark text-uppercase mb-0">'.$itemName.'</h5>
                                         <div class="listing-seller mb-3">sold by '.$sellerUsername.'<span class="listing-seller-score">| '.$sellerFeedbackPercentage.'% Positive feedback </span></div>
                                         <div class="text-dark"> <span class="listing-price-bid-description">Highest Bid:</span> <span class="listing-price-bid listing-price-bid-currency">'.$currencyCodeToSymbol[$currency].'</span>
@@ -63,8 +67,8 @@
                                         <br/>
                                         <br/>
                                         <br/> <span class="text-dark listing-text">Recommended bid:</span> <span class="item-price-bid item-price-bid-currency">'.$currencyCodeToSymbol[$currency].'</span>
-                                        <!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-whole">900</span>
-                                        <!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-currency">00</span>
+                                        <!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-whole">' . $recBidWhole . '</span>
+                                        <!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-currency">' . $recBidDecimal . '</span>
                                         <br/>
                                         <div class="input-group">
                                             <div class="input-icon"> <a href="https://www.ebay.co.uk/itm/'.$itemID.'" class="d-none d-sm-inline-block btn btn-primary shadow-sm col-g-2"><i class="fas fa-gavel"> </i>&nbsp Go Bid!</a> </div>
@@ -87,7 +91,7 @@
                     <!-- Area Chart -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Time evolution</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Highest bid evolution</h6>
                         </div>
                         <div class="card-body">
                             <div class="chart-area">
