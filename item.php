@@ -81,9 +81,7 @@
 
                 </div>
             </div>
-        </div>
-        <!-- Content Row -->
-        <div class="container-fluid">
+            <!-- Content Row -->
             <div class="row" style="margin-top: 280px;">
 
                 <div class="col-xl-6 col-lg-6">
@@ -121,6 +119,7 @@
                 </div>
             </div>
         </div>
+        
         <script>
             // Set the date were counting down to
             var countDownDate = new Date("'.$auctionEndTime.'").getTime();
