@@ -14,7 +14,7 @@
   // ebay's automatic bidding system guidelines
   // https://www.ebay.co.uk/gds/EBAY-AUTOMATIC-BIDDING-SYSTEM-/10000000006909959/g.html
   $recBidWhole = (string)((int)($highestBid + (int)($highestBid/100)));
-  $recBidDecimal = (string)((int)(($highestBid + ($highestBid/100) - $reccBidWhole) * 100));
+  $recBidDecimal = (string)((int)(($highestBid - $reccBidWhole) * 100));
 
   $currencyCodeToSymbol = array("USD" => "$", "GBP" => "£");
 
@@ -53,9 +53,6 @@
                                         <div class="text-dark"> <span><span class="listing-extra-values">'.$bidCount.'</span> bids were placed!</span>
                                             <br>
                                         </div>
-                                        <div class="listing-price-fixed"> <span class="listing-price-fixed-description">Buy it now: </span> <span class="listing-price-fixed-currency">'.$currencyCodeToSymbol[$currency].'</span>
-                                            <!-- commented to remove whitespace on page --><span class="listing-price-fixed-whole">1000</span>
-                                            <!-- commented to remove whitespace on page --><span class="listing-price-fixed-currency">00</span> </div>
                                         <br/>
                                         <div class="text-dark listing-text"> <span>Condition: <span class="listing-extra-values">'.$itemCondition.'</span></span>
                                             <br><span>Auction ends in: <span class="listing-extra-values" id=\'countdown\'></span></span>
