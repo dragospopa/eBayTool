@@ -14,7 +14,7 @@
   // ebay's automatic bidding system guidelines
   // https://www.ebay.co.uk/gds/EBAY-AUTOMATIC-BIDDING-SYSTEM-/10000000006909959/g.html
   $recBidWhole = (string)((int)($highestBid + (int)($highestBid/100)));
-  $recBidDecimal = (string)((int)(($highestBid + ($highestBid/100) - $reccBidWhole) * 100));
+  $recBidDecimal = (string)((int)(($highestBid - $reccBidWhole) * 100));
 
   $currencyCodeToSymbol = array("USD" => "$", "GBP" => "£");
 
