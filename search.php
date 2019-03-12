@@ -58,13 +58,6 @@ if ($conn->query($sql) === FALSE) {
                      --><span class="listing-price-bid listing-price-bid-whole">'.$highestBid.'</span><!--  commented to remove whitespace on page
                      --><span class="listing-price-bid listing-price-bid-currency"></span>
                       </div>
-
-                      <div class="listing-price-fixed">
-                        <span class="listing-price-fixed-description">Buy it now: </span>
-                        <span class="listing-price-fixed-currency">$</span><!-- commented to remove whitespace on page
-                     --><span class="listing-price-fixed-whole">1000</span><!--  commented to remove whitespace on page
-                     --><span class="listing-price-fixed-currency">00</span>
-                      </div>
                       <br/>
                       <div class="text-dark listing-text">
                       <span>Condition: <span class="listing-extra-values">'.$itemCondition.'</span></span><br>
