@@ -14,7 +14,6 @@
   // ebay's automatic bidding system guidelines
   // https://www.ebay.co.uk/gds/EBAY-AUTOMATIC-BIDDING-SYSTEM-/10000000006909959/g.html
   $recBidWhole = (string)((int)($highestBid + (int)($highestBid/100)));
-  $recBidDecimal = (string)((int)(($highestBid - $reccBidWhole) * 100));
 
   $currencyCodeToSymbol = array("USD" => "$", "GBP" => "£");
 
@@ -65,7 +64,6 @@
                                         <br/>
                                         <br/> <span class="text-dark listing-text">Recommended bid:</span> <span class="item-price-bid item-price-bid-currency">'.$currencyCodeToSymbol[$currency].'</span>
                                         <!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-whole">' . $recBidWhole . '</span>
-                                        <!-- commented to remove whitespace on page --><span class="item-price-bid item-price-bid-currency">' . $recBidDecimal . '</span>
                                         <br/>
                                         <div class="input-group">
                                             <div class="input-icon"> <a href="https://www.ebay.co.uk/itm/'.$itemID.'" class="d-none d-sm-inline-block btn btn-primary shadow-sm col-g-2"><i class="fas fa-gavel"> </i>&nbsp Go Bid!</a> </div>
