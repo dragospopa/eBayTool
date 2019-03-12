@@ -209,7 +209,7 @@ function populate($item_query_name) {
       }
 
       $productName = preg_replace("/[^A-Za-z0-9 ]/", "", $productName);
-      $auction_sql ->bind_param("isddsssdss", $itemId, $productName, $highestBid, $currency,$thumbnailPhotoURL, $sellerUsername, $itemCondition, $bidCount, $auctionEndTime, $listingStatus);
+      $auction_sql ->bind_param("isdssssdss", $itemId, $productName, $highestBid, $currency,$thumbnailPhotoURL, $sellerUsername, $itemCondition, $bidCount, $auctionEndTime, $listingStatus);
       $auction_sql->execute();
       if($auction_sql==false)
       {
